@@ -12,55 +12,21 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache</groupId>
-    <artifactId>apache</artifactId>
-    <version>18</version>
-  </parent>
-  <groupId>org.apache.orc</groupId>
-  <artifactId>orc</artifactId>
-  <version>1.6.7</version>
-  <packaging>pom</packaging>
+    <groupId>com.luxin</groupId>
+    <artifactId>lxorc</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-  <name>Apache ORC</name>
-  <url>http://orc.apache.org</url>
+
+  <packaging>jar</packaging>
+  <name>ORC Core</name>
   <description>
-     ORC is a self-describing type-aware columnar file format designed
-     for Hadoop workloads. It is optimized for large streaming reads,
-     but with integrated support for finding required rows
-     quickly. Storing data in a columnar format lets the reader read,
-     decompress, and process only the values that are required for the
-     current query.
+    The core reader and writer for ORC files. Uses the vectorized column batch
+    for the in memory representation.
   </description>
-  <inceptionYear>2013</inceptionYear>
-
-  <mailingLists>
-    <mailingList>
-      <name>ORC User List</name>
-      <subscribe>user-subscribe@orc.apache.org</subscribe>
-      <unsubscribe>user-unsubscribe@orc.apache.org</unsubscribe>
-      <post>user@orc.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/orc-user/</archive>
-    </mailingList>
-    <mailingList>
-      <name>ORC Developer List</name>
-      <subscribe>dev-subscribe@orc.apache.org</subscribe>
-      <unsubscribe>dev-unsubscribe@orc.apache.org</unsubscribe>
-      <post>dev@orc.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/orc-dev/</archive>
-    </mailingList>
-  </mailingLists>
-
-  <modules>
-    <module>shims</module>
-    <module>core</module>
-    <module>mapreduce</module>
-    <module>tools</module>
-    <module>examples</module>
-  </modules>
-
   <properties>
     <!-- Build Properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -74,349 +40,7 @@
     <zookeeper.version>3.4.6</zookeeper.version>
     <maven.version>3.6.3</maven.version>
   </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0-M3</version>
-        <executions>
-          <execution>
-            <id>enforce-maven</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>2.2.1</version>
-                </requireMavenVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.2.0</version>
-        <configuration>
-          <links>
-            <link>http://hadoop.apache.org/docs/r${hadoop.version}/api</link>
-            <link>http://orc.apache.org/api/hive-storage-api</link>
-            <link>http://orc.apache.org/api/orc-core</link>
-            <link>http://orc.apache.org/api/orc-mapreduce</link>
-            <link>http://orc.apache.org/api/orc-tools</link>
-          </links>
-          <offlineLinks>
-            <offlineLink>
-              <url>http://orc.apache.org/api/hive-storage-api</url>
-              <location>${project.basedir}/../../site/api/hive-storage-api</location>
-            </offlineLink>
-            <offlineLink>
-              <url>http://orc.apache.org/api/orc-core</url>
-              <location>${project.basedir}/../../site/api/orc-core</location>
-            </offlineLink>
-            <offlineLink>
-              <url>http://orc.apache.org/api/orc-mapreduce</url>
-              <location>${project.basedir}/../../site/api/orc-mapreduce</location>
-            </offlineLink>
-          </offlineLinks>
-          <reportOutputDirectory>${project.basedir}/../../site/api</reportOutputDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <id>setup-test-dirs</id>
-            <phase>process-test-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <delete dir="${test.tmp.dir}" />
-                <mkdir dir="${test.tmp.dir}" />
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M5</version>
-        <configuration>
-          <trimStackTrace>false</trimStackTrace>
-          <reuseForks>false</reuseForks>
-          <argLine>-Xmx2048m</argLine>
-          <environmentVariables>
-            <TZ>US/Pacific</TZ>
-            <LANG>en_US.UTF-8</LANG>
-          </environmentVariables>
-          <useSystemClassLoader>false</useSystemClassLoader>
-          <failIfNoTests>false</failIfNoTests>
-          <systemPropertyVariables>
-            <test.tmp.dir>${test.tmp.dir}</test.tmp.dir>
-            <example.dir>${example.dir}</example.dir>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.1.1</version>
-      </plugin>
-      <plugin>
-        <groupId>io.github.zlika</groupId>
-        <artifactId>reproducible-build-maven-plugin</artifactId>
-        <version>0.13</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>strip-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.1</version>
-        <configuration>
-          <checkstyleRules>
-            <module name="Checker">
-              <module name="FileTabCharacter">
-                <property name="eachLine" value="true"></property>
-              </module>
-              <module name="TreeWalker">
-                <module name="UnusedImports"/>
-              </module>
-            </module>
-          </checkstyleRules>
-        </configuration>
-      </plugin>
-    </plugins>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>findbugs-maven-plugin</artifactId>
-          <version>3.0.5</version>
-          <configuration>
-            <effort>Max</effort>
-            <excludeFilterFile>${basedir}/src/findbugs/exclude.xml</excludeFilterFile>
-            <xmlOutput>true</xmlOutput>
-            <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
-            <includeTests>true</includeTests>
-          </configuration>
-          <executions>
-            <execution>
-              <id>analyze-compile</id>
-              <phase>test</phase>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-plugin</artifactId>
-          <version>0.13</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <excludeSubProjects>false</excludeSubProjects>
-            <excludes>
-              <exclude>**/data/**</exclude>
-              <exclude>**/*.iml</exclude>
-              <exclude>**/*.json</exclude>
-              <exclude>**/*.json.gz</exclude>
-              <exclude>**/*.orc</exclude>
-              <exclude>**/*.out</exclude>
-              <exclude>**/*.schema</exclude>
-              <exclude>**/*.md</exclude>
-              <exclude>**/target/**</exclude>
-              <exclude>.idea/**</exclude>
-              <exclude>**/*.iml</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.2.0</version>
-          <executions>
-            <execution>
-              <id>add-source</id>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>add-source</goal>
-              </goals>
-              <configuration>
-                <sources>
-                  <source>${project.build.directory}/generated-sources</source>
-                </sources>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>com.github.os72</groupId>
-          <artifactId>protoc-jar-maven-plugin</artifactId>
-          <version>3.11.4</version>
-          <executions>
-            <execution>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>run</goal>
-              </goals>
-              <configuration>
-                 <protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>
-                 <protocVersion>2.5.0</protocVersion>
-                <addSources>none</addSources>
-                <includeDirectories>
-                  <include>../../proto</include>
-                </includeDirectories>
-                <inputDirectories>
-                  <include>../../proto</include>
-                </inputDirectories>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.1</version>
-          <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <version>3.2.4</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>shade</goal>
-              </goals>
-              <configuration>
-                <artifactSet>
-                  <includes>
-                    <include>com.google.protobuf:protobuf-java</include>
-                    <include>org.apache.hive:hive-storage-api</include>
-                  </includes>
-                </artifactSet>
-                <shadedArtifactAttached>true</shadedArtifactAttached>
-                <shadedClassifierName>nohive</shadedClassifierName>
-                <relocations>
-                  <relocation>
-                    <pattern>com.google.protobuf</pattern>
-                    <shadedPattern>com.google.protobuf25</shadedPattern>
-                  </relocation>
-                  <relocation>
-                    <pattern>org.apache.hadoop.hive</pattern>
-                    <shadedPattern>org.apache.orc.storage</shadedPattern>
-                  </relocation>
-                  <relocation>
-                    <pattern>org.apache.hive</pattern>
-                    <shadedPattern>org.apache.orc.storage</shadedPattern>
-                  </relocation>
-                </relocations>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>io.github.zlika</groupId>
-          <artifactId>reproducible-build-maven-plugin</artifactId>
-          <version>0.13</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>cmake</id>
-      <build>
-        <directory>${build.dir}</directory>
-      </build>
-    </profile>
-    <profile>
-      <!-- a profile to check the source for common problems -->
-      <id>analyze</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>findbugs-maven-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.rat</groupId>
-            <artifactId>apache-rat-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <!-- a developer profile to build some benchmarks -->
-      <id>benchmark</id>
-      <modules>
-        <module>bench</module>
-      </modules>
-    </profile>
-  </profiles>
-
-  <dependencyManagement>
-    <dependencies>
-      <!-- intra-project depedencies -->
-      <dependency>
-        <groupId>org.apache.orc</groupId>
-        <artifactId>orc-shims</artifactId>
-        <version>1.6.7</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.orc</groupId>
-        <artifactId>orc-core</artifactId>
-        <version>1.6.7</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.orc</groupId>
-        <artifactId>orc-mapreduce</artifactId>
-        <version>1.6.7</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.orc</groupId>
-        <artifactId>orc-tools</artifactId>
-        <version>1.6.7</version>
-      </dependency>
+ <dependencies>
 
       <!-- inter-project depedencies -->
       <dependency>
@@ -730,6 +354,60 @@
         <version>1.9.5</version>
         <scope>test</scope>
       </dependency>
-    </dependencies>
-  </dependencyManagement>
+
+
+
+  </dependencies>
+
+  <build>
+    <sourceDirectory>${basedir}/src/java</sourceDirectory>
+    <testSourceDirectory>${basedir}/src/test</testSourceDirectory>
+    <resources>
+      <resource>
+	<directory>${basedir}/src/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <groupId>com.github.os72</groupId>
+        <artifactId>protoc-jar-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <sourceFileExcludes>
+            <exclude>**/OrcProto.java</exclude>
+          </sourceFileExcludes>
+          <destDir>${project.artifactId}</destDir>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>cmake</id>
+      <build>
+        <directory>${build.dir}/core</directory>
+      </build>
+    </profile>
+  </profiles>
 </project>
