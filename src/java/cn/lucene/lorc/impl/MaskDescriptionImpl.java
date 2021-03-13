@@ -1,0 +1,147 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package cn.lucene.lorc.impl;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+
+import cn.lucene.lorc.DataMask;
+import cn.lucene.lorc.DataMaskDescription;
+import cn.lucene.lorc.TypeDescription;
+import cn.lucene.orc.OrcProto;
+
+public class MaskDescriptionImpl implements DataMaskDescription,
+                                            Comparable<MaskDescriptionImpl> {
+  private int id;
+  private final String name;
+  private final String[] parameters;
+  private final Set<TypeDescription> columns = new HashSet<>();
+
+  public MaskDescriptionImpl(String name,
+                             String... parameters) {
+    this.name = name;
+    this.parameters = parameters == null ? new String[0] : parameters;
+  }
+
+  public MaskDescriptionImpl(int id,
+                             OrcProto.DataMask mask) {
+    this.id = id;
+    this.name = mask.getName();
+    this.parameters = new String[mask.getMaskParametersCount()];
+    for(int p=0; p < parameters.length; ++p) {
+      parameters[p] = mask.getMaskParameters(p);
+    }
+
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == null || other.getClass() != getClass()) {
+      return false;
+    } else {
+      return compareTo((MaskDescriptionImpl) other) == 0;
+    }
+  }
+
+  public void addColumn(TypeDescription column) {
+    columns.add(column);
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public String[] getParameters() {
+    return parameters;
+  }
+
+  @Override
+  public TypeDescription[] getColumns() {
+    TypeDescription[] result = columns.toArray(new TypeDescription[columns.size()]);
+    // sort the columns by their ids
+    Arrays.sort(result, Comparator.comparingInt(TypeDescription::getId));
+    return result;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public DataMask create(TypeDescription schema,
+                         DataMask.MaskOverrides overrides) {
+    return DataMask.Factory.build(this, schema, overrides);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder buffer = new StringBuilder();
+    buffer.append("mask ");
+    buffer.append(getName());
+    buffer.append('(');
+    String[] parameters = getParameters();
+    if (parameters != null) {
+      for(int p=0; p < parameters.length; ++p) {
+        if (p != 0) {
+          buffer.append(", ");
+        }
+        buffer.append(parameters[p]);
+      }
+    }
+    buffer.append(')');
+    return buffer.toString();
+  }
+
+  @Override
+  public int hashCode() {
+    int result = name.hashCode();
+    for (String p: parameters) {
+      result = result * 101 + p.hashCode();
+    }
+    return result;
+  }
+
+  @Override
+  public int compareTo(@NotNull MaskDescriptionImpl other) {
+    if (other == this) {
+      return 0;
+    }
+    int result = name.compareTo(other.name);
+    int p = 0;
+    while (result == 0 &&
+               p < parameters.length && p < other.parameters.length) {
+      result = parameters[p].compareTo(other.parameters[p]);
+      p += 1;
+    }
+    if (result == 0) {
+      result = Integer.compare(parameters.length, other.parameters.length);
+    }
+    return result;
+  }
+}
+
