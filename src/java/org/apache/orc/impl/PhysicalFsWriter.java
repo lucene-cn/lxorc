@@ -27,23 +27,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.CodedOutputStream;
-
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.orc.CompressionCodec;
 import org.apache.orc.EncryptionVariant;
 import org.apache.orc.OrcFile;
-import org.apache.orc.OrcProto;
 import org.apache.orc.PhysicalWriter;
 import org.apache.orc.TypeDescription;
+import org.apache.orc.impl.writer.StreamOptions;
 import org.apache.orc.impl.writer.WriterEncryptionKey;
 import org.apache.orc.impl.writer.WriterEncryptionVariant;
-import org.apache.orc.impl.writer.StreamOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.protobuf.ByteString;
+import com.google.protobuf.CodedOutputStream;
+
+import cn.lucene.orc.OrcProto;
 
 public class PhysicalFsWriter implements PhysicalWriter {
   private static final Logger LOG = LoggerFactory.getLogger(PhysicalFsWriter.class);

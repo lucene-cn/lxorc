@@ -17,9 +17,13 @@
  */
 package org.apache.orc.impl;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.Chronology;
 import java.time.chrono.IsoChronology;
+import java.util.TimeZone;
+
 import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.hive.serde2.io.DateWritable;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
@@ -34,15 +38,12 @@ import org.apache.orc.DateColumnStatistics;
 import org.apache.orc.DecimalColumnStatistics;
 import org.apache.orc.DoubleColumnStatistics;
 import org.apache.orc.IntegerColumnStatistics;
-import org.apache.orc.OrcProto;
 import org.apache.orc.StringColumnStatistics;
 import org.apache.orc.TimestampColumnStatistics;
 import org.apache.orc.TypeDescription;
-
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.TimeZone;
 import org.threeten.extra.chrono.HybridChronology;
+
+import cn.lucene.orc.OrcProto;
 
 
 public class ColumnStatisticsImpl implements ColumnStatistics {

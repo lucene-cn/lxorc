@@ -19,8 +19,9 @@
 package org.apache.orc.impl;
 
 import org.apache.orc.EncryptionVariant;
-import org.apache.orc.OrcProto;
 import org.jetbrains.annotations.NotNull;
+
+import cn.lucene.orc.OrcProto;
 
 /**
  * The name of a stream within a stripe.

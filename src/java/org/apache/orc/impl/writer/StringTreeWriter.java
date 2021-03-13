@@ -18,12 +18,12 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.orc.TypeDescription;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 public class StringTreeWriter extends StringBaseTreeWriter {
   StringTreeWriter(TypeDescription schema,

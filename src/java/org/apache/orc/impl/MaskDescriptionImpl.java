@@ -18,16 +18,17 @@
 
 package org.apache.orc.impl;
 
-import org.apache.orc.DataMaskDescription;
-import org.apache.orc.OrcProto;
-import org.apache.orc.TypeDescription;
-import org.apache.orc.DataMask;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.orc.DataMask;
+import org.apache.orc.DataMaskDescription;
+import org.apache.orc.TypeDescription;
+import org.jetbrains.annotations.NotNull;
+
+import cn.lucene.orc.OrcProto;
 
 public class MaskDescriptionImpl implements DataMaskDescription,
                                             Comparable<MaskDescriptionImpl> {

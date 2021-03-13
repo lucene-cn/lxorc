@@ -18,9 +18,9 @@
 
 package org.apache.orc;
 
-import org.apache.hadoop.conf.Configuration;
-
 import java.util.Properties;
+
+import org.apache.hadoop.conf.Configuration;
 
 /**
  * Define the configuration properties that Orc understands.

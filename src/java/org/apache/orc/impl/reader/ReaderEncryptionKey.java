@@ -18,15 +18,16 @@
 
 package org.apache.orc.impl.reader;
 
-import org.apache.orc.EncryptionKey;
-import org.apache.orc.EncryptionAlgorithm;
-import org.apache.orc.OrcProto;
-import org.apache.orc.impl.HadoopShims;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.orc.EncryptionAlgorithm;
+import org.apache.orc.EncryptionKey;
+import org.apache.orc.impl.HadoopShims;
+import org.jetbrains.annotations.NotNull;
+
+import cn.lucene.orc.OrcProto;
 
 /**
  * This tracks the keys for reading encrypted columns.

@@ -18,12 +18,13 @@
 
 package org.apache.orc.impl;
 
-import io.airlift.compress.snappy.SnappyCompressor;
-import io.airlift.compress.snappy.SnappyDecompressor;
-import org.apache.orc.CompressionKind;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import org.apache.orc.CompressionKind;
+
+import io.airlift.compress.snappy.SnappyCompressor;
+import io.airlift.compress.snappy.SnappyDecompressor;
 
 public class SnappyCodec extends AircompressorCodec
     implements DirectDecompressionCodec{

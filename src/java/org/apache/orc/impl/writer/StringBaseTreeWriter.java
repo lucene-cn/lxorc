@@ -18,11 +18,15 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.util.JavaDataModel;
 import org.apache.hadoop.io.Text;
 import org.apache.orc.OrcConf;
-import org.apache.orc.OrcProto;
 import org.apache.orc.StringColumnStatistics;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.CryptoUtils;
@@ -34,10 +38,7 @@ import org.apache.orc.impl.PositionedOutputStream;
 import org.apache.orc.impl.StreamName;
 import org.apache.orc.impl.StringRedBlackTree;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import cn.lucene.orc.OrcProto;
 
 public abstract class StringBaseTreeWriter extends TreeWriterBase {
   private static final int INITIAL_DICTIONARY_SIZE = 4096;

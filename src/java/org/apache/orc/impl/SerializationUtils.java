@@ -18,14 +18,6 @@
 
 package org.apache.orc.impl;
 
-import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
-import org.apache.orc.CompressionCodec;
-import org.apache.orc.OrcFile;
-import org.apache.orc.OrcProto;
-import org.apache.orc.impl.writer.StreamOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +26,15 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.TimeZone;
+
+import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
+import org.apache.orc.CompressionCodec;
+import org.apache.orc.OrcFile;
+import org.apache.orc.impl.writer.StreamOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import cn.lucene.orc.OrcProto;
 
 public final class SerializationUtils {
   private static final Logger LOG = LoggerFactory.getLogger(SerializationUtils.class);

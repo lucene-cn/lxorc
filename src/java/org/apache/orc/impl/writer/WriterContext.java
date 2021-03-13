@@ -18,15 +18,16 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.orc.DataMask;
 import org.apache.orc.OrcFile;
-import org.apache.orc.OrcProto;
 import org.apache.orc.PhysicalWriter;
 import org.apache.orc.impl.OutStream;
 import org.apache.orc.impl.StreamName;
 
-import java.io.IOException;
+import cn.lucene.orc.OrcProto;
 
 public interface WriterContext {
 

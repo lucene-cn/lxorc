@@ -18,15 +18,16 @@
 
 package org.apache.orc.impl.writer;
 
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.orc.EncryptionVariant;
-import org.apache.orc.OrcProto;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.LocalKey;
 import org.jetbrains.annotations.NotNull;
 
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.List;
+import cn.lucene.orc.OrcProto;
 
 public class WriterEncryptionVariant implements EncryptionVariant {
   private int id;

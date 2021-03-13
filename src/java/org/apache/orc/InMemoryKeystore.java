@@ -17,15 +17,6 @@
  */
 package org.apache.orc;
 
-import org.apache.orc.impl.HadoopShims;
-import org.apache.orc.impl.KeyProvider;
-import org.apache.orc.impl.LocalKey;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -39,6 +30,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.orc.impl.HadoopShims;
+import org.apache.orc.impl.KeyProvider;
+import org.apache.orc.impl.LocalKey;
 
 /**
  * This is an in-memory implementation of {@link KeyProvider}.

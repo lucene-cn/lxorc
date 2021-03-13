@@ -17,12 +17,12 @@
  */
 package org.apache.orc.impl.writer;
 
-import org.apache.orc.CompressionCodec;
-import org.apache.orc.EncryptionAlgorithm;
-
 import java.security.Key;
 import java.util.Arrays;
 import java.util.function.Consumer;
+
+import org.apache.orc.CompressionCodec;
+import org.apache.orc.EncryptionAlgorithm;
 
 /**
  * The compression and encryption options for writing a stream.

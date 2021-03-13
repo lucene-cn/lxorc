@@ -18,10 +18,11 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.ListColumnVector;
 import org.apache.orc.ColumnStatistics;
-import org.apache.orc.OrcProto;
 import org.apache.orc.StripeStatistics;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.CryptoUtils;
@@ -29,7 +30,7 @@ import org.apache.orc.impl.IntegerWriter;
 import org.apache.orc.impl.PositionRecorder;
 import org.apache.orc.impl.StreamName;
 
-import java.io.IOException;
+import cn.lucene.orc.OrcProto;
 
 public class ListTreeWriter extends TreeWriterBase {
   private final IntegerWriter lengths;

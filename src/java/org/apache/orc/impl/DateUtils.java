@@ -17,8 +17,6 @@
  */
 package org.apache.orc.impl;
 
-import org.threeten.extra.chrono.HybridChronology;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -27,6 +25,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.concurrent.TimeUnit;
+
+import org.threeten.extra.chrono.HybridChronology;
 
 /**
  * Conversion utilities from the hybrid Julian/Gregorian calendar to/from the

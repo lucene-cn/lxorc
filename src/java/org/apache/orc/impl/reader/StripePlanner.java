@@ -18,11 +18,18 @@
 
 package org.apache.orc.impl.reader;
 
-import com.google.protobuf.CodedInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.orc.DataReader;
 import org.apache.orc.EncryptionAlgorithm;
 import org.apache.orc.OrcFile;
-import org.apache.orc.OrcProto;
 import org.apache.orc.StripeInformation;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.BufferChunk;
@@ -34,14 +41,9 @@ import org.apache.orc.impl.RecordReaderUtils;
 import org.apache.orc.impl.StreamName;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.protobuf.CodedInputStream;
+
+import cn.lucene.orc.OrcProto;
 
 /**
  * This class handles parsing the stripe information and handling the necessary

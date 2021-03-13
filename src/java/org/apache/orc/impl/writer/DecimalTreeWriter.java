@@ -18,13 +18,15 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+import java.util.function.Consumer;
+
 import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.Decimal64ColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.DecimalColumnVector;
 import org.apache.hadoop.hive.ql.util.JavaDataModel;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
-import org.apache.orc.OrcProto;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.CryptoUtils;
 import org.apache.orc.impl.IntegerWriter;
@@ -33,8 +35,7 @@ import org.apache.orc.impl.PositionedOutputStream;
 import org.apache.orc.impl.SerializationUtils;
 import org.apache.orc.impl.StreamName;
 
-import java.io.IOException;
-import java.util.function.Consumer;
+import cn.lucene.orc.OrcProto;
 
 public class DecimalTreeWriter extends TreeWriterBase {
   private final PositionedOutputStream valueStream;

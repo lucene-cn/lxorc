@@ -18,13 +18,13 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.Utf8Utils;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Under the covers, varchar is written to ORC the same way as string.

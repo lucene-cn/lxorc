@@ -18,12 +18,12 @@
 
 package org.apache.orc.impl;
 
+import java.nio.ByteBuffer;
+
 import org.apache.hadoop.hive.common.io.DiskRange;
 import org.apache.hadoop.hive.common.io.DiskRangeList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.ByteBuffer;
 
 /**
  * The sections of stripe that we have read.

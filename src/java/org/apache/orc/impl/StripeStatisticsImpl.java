@@ -18,12 +18,13 @@
 
 package org.apache.orc.impl;
 
-import org.apache.orc.OrcProto;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.orc.StripeStatistics;
 import org.apache.orc.TypeDescription;
 
-import java.util.ArrayList;
-import java.util.List;
+import cn.lucene.orc.OrcProto;
 
 public class StripeStatisticsImpl extends StripeStatistics  {
   public StripeStatisticsImpl(TypeDescription schema,

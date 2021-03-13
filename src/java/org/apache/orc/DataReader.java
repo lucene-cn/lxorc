@@ -24,6 +24,8 @@ import java.nio.ByteBuffer;
 import org.apache.orc.impl.BufferChunkList;
 import org.apache.orc.impl.InStream;
 
+import cn.lucene.orc.OrcProto;
+
 /** An abstract data reader that IO formats can use to read bytes from underlying storage. */
 public interface DataReader extends AutoCloseable, Cloneable {
 

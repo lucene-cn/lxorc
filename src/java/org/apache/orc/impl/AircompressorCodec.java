@@ -18,13 +18,14 @@
 
 package org.apache.orc.impl;
 
-import io.airlift.compress.Compressor;
-import io.airlift.compress.Decompressor;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
 import org.apache.orc.CompressionCodec;
 import org.apache.orc.CompressionKind;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import io.airlift.compress.Compressor;
+import io.airlift.compress.Decompressor;
 
 public class AircompressorCodec implements CompressionCodec {
   private final CompressionKind kind;

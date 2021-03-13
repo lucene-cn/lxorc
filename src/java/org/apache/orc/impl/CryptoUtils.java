@@ -18,17 +18,18 @@
 
 package org.apache.orc.impl;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.orc.InMemoryKeystore;
-import org.apache.orc.OrcConf;
-import org.apache.orc.OrcProto;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.orc.InMemoryKeystore;
+import org.apache.orc.OrcConf;
+
+import cn.lucene.orc.OrcProto;
 
 /**
  * This class has routines to work with encryption within ORC files.

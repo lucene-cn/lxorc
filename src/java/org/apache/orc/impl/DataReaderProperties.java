@@ -17,12 +17,12 @@
  */
 package org.apache.orc.impl;
 
+import java.util.function.Supplier;
+
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.orc.OrcConf;
-
-import java.util.function.Supplier;
 
 public final class DataReaderProperties {
 

@@ -18,10 +18,12 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.UnionColumnVector;
 import org.apache.orc.ColumnStatistics;
-import org.apache.orc.OrcProto;
 import org.apache.orc.StripeStatistics;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.CryptoUtils;
@@ -29,8 +31,7 @@ import org.apache.orc.impl.PositionRecorder;
 import org.apache.orc.impl.RunLengthByteWriter;
 import org.apache.orc.impl.StreamName;
 
-import java.io.IOException;
-import java.util.List;
+import cn.lucene.orc.OrcProto;
 
 public class UnionTreeWriter extends TreeWriterBase {
   private final RunLengthByteWriter tags;

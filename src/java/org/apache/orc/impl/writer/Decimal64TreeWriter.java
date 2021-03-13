@@ -18,12 +18,13 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.Decimal64ColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.DecimalColumnVector;
 import org.apache.hadoop.hive.ql.util.JavaDataModel;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
-import org.apache.orc.OrcProto;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.CryptoUtils;
 import org.apache.orc.impl.OutStream;
@@ -31,7 +32,7 @@ import org.apache.orc.impl.PositionRecorder;
 import org.apache.orc.impl.RunLengthIntegerWriterV2;
 import org.apache.orc.impl.StreamName;
 
-import java.io.IOException;
+import cn.lucene.orc.OrcProto;
 
 /**
  * Writer for short decimals in ORCv2.

@@ -18,16 +18,16 @@
 
 package org.apache.orc.impl;
 
-import org.apache.orc.MemoryManager;
-import org.apache.orc.OrcConf;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.orc.MemoryManager;
+import org.apache.orc.OrcConf;
 
 /**
  * Implements a memory manager that keeps a global context of how many ORC

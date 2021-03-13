@@ -17,10 +17,10 @@
  */
 package org.apache.orc.impl;
 
-import org.apache.orc.CompressionCodec;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import org.apache.orc.CompressionCodec;
 
 public interface DirectDecompressionCodec extends CompressionCodec {
   public boolean isAvailable();

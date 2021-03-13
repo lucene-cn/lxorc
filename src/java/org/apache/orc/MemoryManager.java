@@ -18,9 +18,9 @@
 
 package org.apache.orc;
 
-import org.apache.hadoop.fs.Path;
-
 import java.io.IOException;
+
+import org.apache.hadoop.fs.Path;
 
 /**
  * A memory manager that keeps a global context of how many ORC

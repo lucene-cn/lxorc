@@ -18,10 +18,12 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+import java.util.function.Consumer;
+
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.orc.BinaryColumnStatistics;
-import org.apache.orc.OrcProto;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.CryptoUtils;
 import org.apache.orc.impl.IntegerWriter;
@@ -29,8 +31,7 @@ import org.apache.orc.impl.PositionRecorder;
 import org.apache.orc.impl.PositionedOutputStream;
 import org.apache.orc.impl.StreamName;
 
-import java.io.IOException;
-import java.util.function.Consumer;
+import cn.lucene.orc.OrcProto;
 
 public class BinaryTreeWriter extends TreeWriterBase {
   private final PositionedOutputStream stream;

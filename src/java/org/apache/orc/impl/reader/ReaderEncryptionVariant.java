@@ -18,18 +18,24 @@
 
 package org.apache.orc.impl.reader;
 
+import java.io.IOException;
+import java.security.Key;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.orc.EncryptionAlgorithm;
 import org.apache.orc.EncryptionKey;
 import org.apache.orc.EncryptionVariant;
-import org.apache.orc.OrcProto;
 import org.apache.orc.StripeInformation;
 import org.apache.orc.StripeStatistics;
 import org.apache.orc.TypeDescription;
+import org.apache.orc.impl.BufferChunk;
 import org.apache.orc.impl.CryptoUtils;
 import org.apache.orc.impl.InStream;
 import org.apache.orc.impl.KeyProvider;
-import org.apache.orc.impl.BufferChunk;
 import org.apache.orc.impl.LocalKey;
 import org.apache.orc.impl.ReaderImpl;
 import org.apache.orc.impl.StripeStatisticsImpl;
@@ -37,12 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.security.Key;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import cn.lucene.orc.OrcProto;
 
 /**
  * Information about an encrypted column.

@@ -18,14 +18,14 @@
 
 package org.apache.orc.impl.writer;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.orc.EncryptionAlgorithm;
 import org.apache.orc.EncryptionKey;
 import org.apache.orc.impl.HadoopShims;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class WriterEncryptionKey implements EncryptionKey {
   private final HadoopShims.KeyMetadata metadata;

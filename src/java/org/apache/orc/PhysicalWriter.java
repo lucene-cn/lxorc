@@ -25,6 +25,8 @@ import org.apache.orc.impl.StreamName;
 import org.apache.orc.impl.writer.StreamOptions;
 import org.apache.orc.impl.writer.WriterEncryptionVariant;
 
+import cn.lucene.orc.OrcProto;
+
 /**
  * This interface separates the physical layout of ORC files from the higher
  * level details.

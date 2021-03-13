@@ -18,17 +18,18 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.hadoop.hive.ql.util.JavaDataModel;
-import org.apache.orc.OrcProto;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.CryptoUtils;
 import org.apache.orc.impl.PositionRecorder;
 import org.apache.orc.impl.RunLengthByteWriter;
 import org.apache.orc.impl.StreamName;
 
-import java.io.IOException;
+import cn.lucene.orc.OrcProto;
 
 public class ByteTreeWriter extends TreeWriterBase {
   private final RunLengthByteWriter writer;

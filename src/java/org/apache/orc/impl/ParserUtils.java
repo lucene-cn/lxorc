@@ -18,11 +18,11 @@
 
 package org.apache.orc.impl;
 
-import org.apache.orc.TypeDescription;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import org.apache.orc.TypeDescription;
 
 public class ParserUtils {
 

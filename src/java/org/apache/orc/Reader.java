@@ -26,6 +26,8 @@ import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.io.sarg.SearchArgument;
 
+import cn.lucene.orc.OrcProto;
+
 /**
  * The interface for reading ORC files.
  *

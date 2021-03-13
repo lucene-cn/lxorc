@@ -45,10 +45,11 @@ import org.apache.hadoop.hive.ql.exec.vector.expressions.StringExpr;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
 import org.apache.orc.OrcFile;
 import org.apache.orc.TypeDescription;
-import org.apache.orc.OrcProto;
 import org.apache.orc.impl.reader.ReaderEncryption;
 import org.apache.orc.impl.reader.StripePlanner;
 import org.apache.orc.impl.writer.TimestampTreeWriter;
+
+import cn.lucene.orc.OrcProto;
 
 /**
  * Factory for creating ORC tree readers.

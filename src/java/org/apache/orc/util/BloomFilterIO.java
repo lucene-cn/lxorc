@@ -20,11 +20,11 @@ package org.apache.orc.util;
 
 import com.google.protobuf.ByteString;
 import org.apache.orc.OrcFile;
-import org.apache.orc.OrcProto;
 import org.apache.orc.TypeDescription;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import cn.lucene.orc.OrcProto;
 
 public class BloomFilterIO  {
 

@@ -18,7 +18,7 @@
 
 package org.apache.orc.impl;
 
-import org.apache.orc.OrcProto;
+import cn.lucene.orc.OrcProto;
 
 public final class OrcIndex {
   OrcProto.RowIndex[] rowGroupIndex;

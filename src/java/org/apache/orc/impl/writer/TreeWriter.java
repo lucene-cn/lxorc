@@ -18,14 +18,14 @@
 
 package org.apache.orc.impl.writer;
 
+import java.io.IOException;
+
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 import org.apache.orc.ColumnStatistics;
 import org.apache.orc.OrcFile;
 import org.apache.orc.StripeStatistics;
 import org.apache.orc.TypeDescription;
-
-import java.io.IOException;
 
 /**
  * The writers for the specific writers of each type. This provides

@@ -25,38 +25,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.apache.orc.EncryptionAlgorithm;
-import org.apache.orc.EncryptionKey;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hive.ql.util.JavaDataModel;
+import org.apache.hadoop.io.Text;
+import org.apache.orc.ColumnStatistics;
+import org.apache.orc.CompressionCodec;
 import org.apache.orc.CompressionKind;
 import org.apache.orc.DataMaskDescription;
+import org.apache.orc.EncryptionAlgorithm;
+import org.apache.orc.EncryptionKey;
 import org.apache.orc.EncryptionVariant;
+import org.apache.orc.FileFormatException;
 import org.apache.orc.FileMetadata;
 import org.apache.orc.OrcConf;
 import org.apache.orc.OrcFile;
 import org.apache.orc.OrcUtils;
 import org.apache.orc.Reader;
 import org.apache.orc.RecordReader;
-import org.apache.orc.TypeDescription;
-import org.apache.orc.ColumnStatistics;
-import org.apache.orc.CompressionCodec;
-import org.apache.orc.FileFormatException;
 import org.apache.orc.StripeInformation;
 import org.apache.orc.StripeStatistics;
+import org.apache.orc.TypeDescription;
 import org.apache.orc.UnknownFormatException;
 import org.apache.orc.impl.reader.ReaderEncryption;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hive.ql.util.JavaDataModel;
-import org.apache.hadoop.io.Text;
-import org.apache.orc.OrcProto;
-
-import com.google.protobuf.CodedInputStream;
 import org.apache.orc.impl.reader.ReaderEncryptionVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.protobuf.CodedInputStream;
+
+import cn.lucene.orc.OrcProto;
 
 public class ReaderImpl implements Reader {
 

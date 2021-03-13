@@ -17,15 +17,17 @@
  */
 package org.apache.orc;
 
-import org.apache.orc.impl.ReaderImpl;
-import org.apache.orc.impl.SchemaEvolution;
+import static org.apache.hadoop.util.StringUtils.COMMA_STR;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.apache.hadoop.util.StringUtils.COMMA_STR;
+import org.apache.orc.impl.ReaderImpl;
+import org.apache.orc.impl.SchemaEvolution;
+
+import cn.lucene.orc.OrcProto;
 
 public class OrcUtils {
 

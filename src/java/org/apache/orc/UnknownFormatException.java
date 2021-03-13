@@ -18,10 +18,13 @@
 
 package org.apache.orc;
 
-import com.google.protobuf.TextFormat;
+import java.io.IOException;
+
 import org.apache.hadoop.fs.Path;
 
-import java.io.IOException;
+import com.google.protobuf.TextFormat;
+
+import cn.lucene.orc.OrcProto;
 
 public class UnknownFormatException extends IOException {
   private final Path path;

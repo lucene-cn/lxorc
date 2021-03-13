@@ -17,10 +17,10 @@
  */
 package org.apache.orc;
 
+import java.util.ServiceLoader;
+
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.orc.impl.MaskDescriptionImpl;
-
-import java.util.ServiceLoader;
 
 /**
  * The API for masking data during column encryption for ORC.

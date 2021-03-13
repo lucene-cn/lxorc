@@ -18,6 +18,8 @@
 
 package org.apache.orc.impl;
 
+import java.util.List;
+
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.DateColumnVector;
@@ -31,8 +33,6 @@ import org.apache.hadoop.hive.ql.exec.vector.StructColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.UnionColumnVector;
 import org.apache.orc.TypeDescription;
-
-import java.util.List;
 
 public class TypeUtils {
   private TypeUtils() {}

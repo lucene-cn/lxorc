@@ -17,10 +17,11 @@
  */
 
 package org.apache.orc;
+import java.util.List;
 
 import org.apache.orc.impl.ColumnStatisticsImpl;
 
-import java.util.List;
+import cn.lucene.orc.OrcProto;
 
 /**
  * The statistics for a stripe.

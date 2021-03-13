@@ -44,11 +44,12 @@ import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.expressions.StringExpr;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
-import org.apache.orc.OrcProto;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.TypeDescription.Category;
 import org.apache.orc.impl.reader.StripePlanner;
 import org.threeten.extra.chrono.HybridChronology;
+
+import cn.lucene.orc.OrcProto;
 
 /**
  * Convert ORC tree readers.
