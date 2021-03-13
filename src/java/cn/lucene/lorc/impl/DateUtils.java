@@ -26,7 +26,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.concurrent.TimeUnit;
 
-import cn.lucene.threeten.extra.chrono.HybridChronology;
+import org.threeten.extra.chrono.HybridChronology;
 
 /**
  * Conversion utilities from the hybrid Julian/Gregorian calendar to/from the

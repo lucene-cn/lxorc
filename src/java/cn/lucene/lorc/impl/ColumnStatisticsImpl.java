@@ -30,6 +30,7 @@ import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparator;
+import org.threeten.extra.chrono.HybridChronology;
 
 import cn.lucene.lorc.BinaryColumnStatistics;
 import cn.lucene.lorc.BooleanColumnStatistics;
@@ -43,7 +44,6 @@ import cn.lucene.lorc.StringColumnStatistics;
 import cn.lucene.lorc.TimestampColumnStatistics;
 import cn.lucene.lorc.TypeDescription;
 import cn.lucene.orc.OrcProto;
-import cn.lucene.threeten.extra.chrono.HybridChronology;
 
 
 public class ColumnStatisticsImpl implements ColumnStatistics {
