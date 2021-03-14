@@ -44,7 +44,7 @@ import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.expressions.StringExpr;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
-import org.threeten.extra.chrono.HybridChronology;
+import org.threeten.extra.chrono.HybridChronology_forlxdb;
 
 import cn.lucene.lorc.TypeDescription;
 import cn.lucene.lorc.TypeDescription.Category;
@@ -1231,7 +1231,7 @@ public class ConvertTreeReaderFactory extends TreeReaderFactory {
       local = context.getUseUTCTimestamp() ? ZoneId.of("UTC")
                   : ZoneId.systemDefault();
       Chronology chronology = context.useProlepticGregorian()
-          ? IsoChronology.INSTANCE : HybridChronology.INSTANCE;
+          ? IsoChronology.INSTANCE : HybridChronology_forlxdb.INSTANCE;
       formatter = (instantType ? INSTANT_TIMESTAMP_FORMAT : TIMESTAMP_FORMAT)
           .withChronology(chronology);
     }
@@ -1559,7 +1559,7 @@ public class ConvertTreeReaderFactory extends TreeReaderFactory {
       useProlepticGregorian = context.useProlepticGregorian();
       Chronology chronology = useProlepticGregorian
                                   ? IsoChronology.INSTANCE
-                                  : HybridChronology.INSTANCE;
+                                  : HybridChronology_forlxdb.INSTANCE;
       if (isInstant) {
         formatter = INSTANT_TIMESTAMP_FORMAT.withChronology(chronology);
       } else {

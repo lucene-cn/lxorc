@@ -26,7 +26,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.concurrent.TimeUnit;
 
-import org.threeten.extra.chrono.HybridChronology;
+import org.threeten.extra.chrono.HybridChronology_forlxdb;
 
 /**
  * Conversion utilities from the hybrid Julian/Gregorian calendar to/from the
@@ -46,7 +46,7 @@ public class DateUtils {
   private static final long SWITCHOVER_DAYS;
   private static final DateTimeFormatter HYBRID_DATE_FORMAT =
       ConvertTreeReaderFactory.DATE_FORMAT
-          .withChronology(HybridChronology.INSTANCE)
+          .withChronology(HybridChronology_forlxdb.INSTANCE)
           .withZone(UTC);
   private static final DateTimeFormatter PROLEPTIC_DATE_FORMAT =
       DateTimeFormatter.ISO_LOCAL_DATE
@@ -54,11 +54,11 @@ public class DateUtils {
           .withZone(UTC);
   private static final DateTimeFormatter HYBRID_UTC_TIME_FORMAT =
       ConvertTreeReaderFactory.TIMESTAMP_FORMAT
-          .withChronology(HybridChronology.INSTANCE)
+          .withChronology(HybridChronology_forlxdb.INSTANCE)
           .withZone(UTC);
   private static final DateTimeFormatter HYBRID_LOCAL_TIME_FORMAT =
       ConvertTreeReaderFactory.TIMESTAMP_FORMAT
-          .withChronology(HybridChronology.INSTANCE)
+          .withChronology(HybridChronology_forlxdb.INSTANCE)
           .withZone(LOCAL);
   private static final DateTimeFormatter PROLEPTIC_UTC_TIME_FORMAT =
       ConvertTreeReaderFactory.TIMESTAMP_FORMAT

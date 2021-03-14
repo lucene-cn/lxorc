@@ -30,7 +30,7 @@ import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparator;
-import org.threeten.extra.chrono.HybridChronology;
+import org.threeten.extra.chrono.HybridChronology_forlxdb;
 
 import cn.lucene.lorc.BinaryColumnStatistics;
 import cn.lucene.lorc.BooleanColumnStatistics;
@@ -1484,7 +1484,7 @@ public class ColumnStatisticsImpl implements ColumnStatistics {
     private final Chronology chronology;
 
     static Chronology getInstance(boolean proleptic) {
-      return proleptic ? IsoChronology.INSTANCE : HybridChronology.INSTANCE;
+      return proleptic ? IsoChronology.INSTANCE : HybridChronology_forlxdb.INSTANCE;
     }
 
     DateStatisticsImpl(boolean convertToProleptic) {
