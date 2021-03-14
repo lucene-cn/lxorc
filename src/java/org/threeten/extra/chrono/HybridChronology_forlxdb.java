@@ -88,14 +88,14 @@ import org.threeten.extra.chrono.JulianEra;
  * <h3>Implementation Requirements</h3>
  * This class is immutable and thread-safe.
  */
-public final class HybridChronology
+public final class HybridChronology_forlxdb
         extends AbstractChronology
         implements Serializable {
 
     /**
      * Singleton instance for the Coptic chronology.
      */
-    public static final HybridChronology INSTANCE = new HybridChronology();
+    public static final HybridChronology_forlxdb INSTANCE = new HybridChronology_forlxdb();
     /**
      * The cutover date, October 15, 1582.
      */
@@ -143,7 +143,7 @@ public final class HybridChronology
      * @deprecated Use the singleton {@link #INSTANCE} instead.
      */
     @Deprecated
-    public HybridChronology() {
+    public HybridChronology_forlxdb() {
     }
 
     /**
@@ -215,7 +215,7 @@ public final class HybridChronology
      * @throws ClassCastException if the {@code era} is not a {@code JulianEra}
      */
     @Override
-    public HybridDate date(Era era, int yearOfEra, int month, int dayOfMonth) {
+    public HybridDate_forlxdb date(Era era, int yearOfEra, int month, int dayOfMonth) {
         return date(prolepticYear(era, yearOfEra), month, dayOfMonth);
     }
 
@@ -234,8 +234,8 @@ public final class HybridChronology
      * @throws DateTimeException if unable to create the date
      */
     @Override
-    public HybridDate date(int prolepticYear, int month, int dayOfMonth) {
-        return HybridDate.of(prolepticYear, month, dayOfMonth);
+    public HybridDate_forlxdb date(int prolepticYear, int month, int dayOfMonth) {
+        return HybridDate_forlxdb.of(prolepticYear, month, dayOfMonth);
     }
 
     /**
@@ -252,7 +252,7 @@ public final class HybridChronology
      * @throws ClassCastException if the {@code era} is not a {@code JulianEra}
      */
     @Override
-    public HybridDate dateYearDay(Era era, int yearOfEra, int dayOfYear) {
+    public HybridDate_forlxdb dateYearDay(Era era, int yearOfEra, int dayOfYear) {
         return dateYearDay(prolepticYear(era, yearOfEra), dayOfYear);
     }
 
@@ -268,8 +268,8 @@ public final class HybridChronology
      * @throws DateTimeException if unable to create the date
      */
     @Override
-    public HybridDate dateYearDay(int prolepticYear, int dayOfYear) {
-        return HybridDate.ofYearDay(prolepticYear, dayOfYear);
+    public HybridDate_forlxdb dateYearDay(int prolepticYear, int dayOfYear) {
+        return HybridDate_forlxdb.ofYearDay(prolepticYear, dayOfYear);
     }
 
     /**
@@ -280,8 +280,8 @@ public final class HybridChronology
      * @throws DateTimeException if unable to create the date
      */
     @Override  // override with covariant return type
-    public HybridDate dateEpochDay(long epochDay) {
-        return HybridDate.ofEpochDay(epochDay);
+    public HybridDate_forlxdb dateEpochDay(long epochDay) {
+        return HybridDate_forlxdb.ofEpochDay(epochDay);
     }
 
     //-------------------------------------------------------------------------
@@ -298,8 +298,8 @@ public final class HybridChronology
      * @throws DateTimeException if unable to create the date
      */
     @Override  // override with covariant return type
-    public HybridDate dateNow() {
-        return HybridDate.now();
+    public HybridDate_forlxdb dateNow() {
+        return HybridDate_forlxdb.now();
     }
 
     /**
@@ -316,8 +316,8 @@ public final class HybridChronology
      * @throws DateTimeException if unable to create the date
      */
     @Override  // override with covariant return type
-    public HybridDate dateNow(ZoneId zone) {
-        return HybridDate.now(zone);
+    public HybridDate_forlxdb dateNow(ZoneId zone) {
+        return HybridDate_forlxdb.now(zone);
     }
 
     /**
@@ -332,8 +332,8 @@ public final class HybridChronology
      * @throws DateTimeException if unable to create the date
      */
     @Override  // override with covariant return type
-    public HybridDate dateNow(Clock clock) {
-        return HybridDate.now(clock);
+    public HybridDate_forlxdb dateNow(Clock clock) {
+        return HybridDate_forlxdb.now(clock);
     }
 
     //-------------------------------------------------------------------------
@@ -345,8 +345,8 @@ public final class HybridChronology
      * @throws DateTimeException if unable to create the date
      */
     @Override
-    public HybridDate date(TemporalAccessor temporal) {
-        return HybridDate.from(temporal);
+    public HybridDate_forlxdb date(TemporalAccessor temporal) {
+        return HybridDate_forlxdb.from(temporal);
     }
 
     /**
@@ -358,8 +358,8 @@ public final class HybridChronology
      */
     @Override
     @SuppressWarnings("unchecked")
-    public ChronoLocalDateTime<HybridDate> localDateTime(TemporalAccessor temporal) {
-        return (ChronoLocalDateTime<HybridDate>) super.localDateTime(temporal);
+    public ChronoLocalDateTime<HybridDate_forlxdb> localDateTime(TemporalAccessor temporal) {
+        return (ChronoLocalDateTime<HybridDate_forlxdb>) super.localDateTime(temporal);
     }
 
     /**
@@ -371,8 +371,8 @@ public final class HybridChronology
      */
     @Override
     @SuppressWarnings("unchecked")
-    public ChronoZonedDateTime<HybridDate> zonedDateTime(TemporalAccessor temporal) {
-        return (ChronoZonedDateTime<HybridDate>) super.zonedDateTime(temporal);
+    public ChronoZonedDateTime<HybridDate_forlxdb> zonedDateTime(TemporalAccessor temporal) {
+        return (ChronoZonedDateTime<HybridDate_forlxdb>) super.zonedDateTime(temporal);
     }
 
     /**
@@ -385,8 +385,8 @@ public final class HybridChronology
      */
     @Override
     @SuppressWarnings("unchecked")
-    public ChronoZonedDateTime<HybridDate> zonedDateTime(Instant instant, ZoneId zone) {
-        return (ChronoZonedDateTime<HybridDate>) super.zonedDateTime(instant, zone);
+    public ChronoZonedDateTime<HybridDate_forlxdb> zonedDateTime(Instant instant, ZoneId zone) {
+        return (ChronoZonedDateTime<HybridDate_forlxdb>) super.zonedDateTime(instant, zone);
     }
 
     //-----------------------------------------------------------------------
@@ -451,8 +451,8 @@ public final class HybridChronology
 
     //-----------------------------------------------------------------------
     @Override  // override for return type
-    public HybridDate resolveDate(Map<TemporalField, Long> fieldValues, ResolverStyle resolverStyle) {
-        return (HybridDate) super.resolveDate(fieldValues, resolverStyle);
+    public HybridDate_forlxdb resolveDate(Map<TemporalField, Long> fieldValues, ResolverStyle resolverStyle) {
+        return (HybridDate_forlxdb) super.resolveDate(fieldValues, resolverStyle);
     }
 
 }

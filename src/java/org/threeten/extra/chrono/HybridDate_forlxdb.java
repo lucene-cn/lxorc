@@ -17,9 +17,9 @@
  */
 package org.threeten.extra.chrono;
 
-import static org.threeten.extra.chrono.HybridChronology.CUTOVER;
-import static org.threeten.extra.chrono.HybridChronology.CUTOVER_DAYS;
-import static org.threeten.extra.chrono.HybridChronology.CUTOVER_YEAR;
+import static org.threeten.extra.chrono.HybridChronology_forlxdb.CUTOVER;
+import static org.threeten.extra.chrono.HybridChronology_forlxdb.CUTOVER_DAYS;
+import static org.threeten.extra.chrono.HybridChronology_forlxdb.CUTOVER_YEAR;
 
 import java.io.Serializable;
 import java.time.Clock;
@@ -48,7 +48,7 @@ import org.threeten.extra.chrono.JulianEra;
 /**
  * A date in the British Cutover calendar system.
  * <p>
- * This date operates using the {@linkplain HybridChronology British Cutover calendar}.
+ * This date operates using the {@linkplain HybridChronology_forlxdb British Cutover calendar}.
  *
  * <h3>Implementation Requirements</h3>
  * This class is immutable and thread-safe.
@@ -56,7 +56,7 @@ import org.threeten.extra.chrono.JulianEra;
  * This class must be treated as a value type. Do not synchronize, rely on the
  * identity hash code or use the distinction between equals() and ==.
  */
-public final class HybridDate
+public final class HybridDate_forlxdb
         extends AbstractDate
         implements ChronoLocalDate, Serializable {
     /**
@@ -84,7 +84,7 @@ public final class HybridDate
      *
      * @return the current date using the system clock and default time-zone, not null
      */
-    public static HybridDate now() {
+    public static HybridDate_forlxdb now() {
         return now(Clock.systemDefaultZone());
     }
 
@@ -100,7 +100,7 @@ public final class HybridDate
      * @param zone  the zone ID to use, not null
      * @return the current date using the system clock, not null
      */
-    public static HybridDate now(ZoneId zone) {
+    public static HybridDate_forlxdb now(ZoneId zone) {
         return now(Clock.system(zone));
     }
 
@@ -115,8 +115,8 @@ public final class HybridDate
      * @return the current date, not null
      * @throws DateTimeException if the current date cannot be obtained
      */
-    public static HybridDate now(Clock clock) {
-        return new HybridDate(LocalDate.now(clock));
+    public static HybridDate_forlxdb now(Clock clock) {
+        return new HybridDate_forlxdb(LocalDate.now(clock));
     }
 
     /**
@@ -138,8 +138,8 @@ public final class HybridDate
      * @throws DateTimeException if the value of any field is out of range,
      *  or if the day-of-month is invalid for the month-year
      */
-    public static HybridDate of(int prolepticYear, int month, int dayOfMonth) {
-        return HybridDate.create(prolepticYear, month, dayOfMonth);
+    public static HybridDate_forlxdb of(int prolepticYear, int month, int dayOfMonth) {
+        return HybridDate_forlxdb.create(prolepticYear, month, dayOfMonth);
     }
 
     /**
@@ -159,11 +159,11 @@ public final class HybridDate
      * @return the date in British Cutover calendar system, not null
      * @throws DateTimeException if unable to convert to a {@code HybridDate}
      */
-    public static HybridDate from(TemporalAccessor temporal) {
-        if (temporal instanceof HybridDate) {
-            return (HybridDate) temporal;
+    public static HybridDate_forlxdb from(TemporalAccessor temporal) {
+        if (temporal instanceof HybridDate_forlxdb) {
+            return (HybridDate_forlxdb) temporal;
         }
-        return new HybridDate(LocalDate.from(temporal));
+        return new HybridDate_forlxdb(LocalDate.from(temporal));
     }
 
     //-----------------------------------------------------------------------
@@ -180,16 +180,16 @@ public final class HybridDate
      * @throws DateTimeException if the value of any field is out of range,
      *  or if the day-of-year is invalid for the year
      */
-    static HybridDate ofYearDay(int prolepticYear, int dayOfYear) {
+    static HybridDate_forlxdb ofYearDay(int prolepticYear, int dayOfYear) {
         if (prolepticYear < CUTOVER_YEAR || (prolepticYear == CUTOVER_YEAR && dayOfYear <= 246)) {
             JulianDate julian = JulianDate.ofYearDay(prolepticYear, dayOfYear);
-            return new HybridDate(julian);
+            return new HybridDate_forlxdb(julian);
         } else if (prolepticYear == CUTOVER_YEAR) {
             LocalDate iso = LocalDate.ofYearDay(prolepticYear, dayOfYear + CUTOVER_DAYS);
-            return new HybridDate(iso);
+            return new HybridDate_forlxdb(iso);
         } else {
             LocalDate iso = LocalDate.ofYearDay(prolepticYear, dayOfYear);
-            return new HybridDate(iso);
+            return new HybridDate_forlxdb(iso);
         }
     }
 
@@ -201,8 +201,8 @@ public final class HybridDate
      * @return the date in British Cutover calendar system, not null
      * @throws DateTimeException if the epoch-day is out of range
      */
-    static HybridDate ofEpochDay(final long epochDay) {
-        return new HybridDate(LocalDate.ofEpochDay(epochDay));
+    static HybridDate_forlxdb ofEpochDay(final long epochDay) {
+        return new HybridDate_forlxdb(LocalDate.ofEpochDay(epochDay));
     }
 
     /**
@@ -215,17 +215,17 @@ public final class HybridDate
      * @throws DateTimeException if the value of any field is out of range,
      *  or if the day-of-month is invalid for the month-year
      */
-    static HybridDate create(int prolepticYear, int month, int dayOfMonth) {
+    static HybridDate_forlxdb create(int prolepticYear, int month, int dayOfMonth) {
         if (prolepticYear < CUTOVER_YEAR) {
             JulianDate julian = JulianDate.of(prolepticYear, month, dayOfMonth);
-            return new HybridDate(julian);
+            return new HybridDate_forlxdb(julian);
         } else {
             LocalDate iso = LocalDate.of(prolepticYear, month, dayOfMonth);
             if (iso.isBefore(CUTOVER)) {
                 JulianDate julian = JulianDate.of(prolepticYear, month, dayOfMonth);
-                return new HybridDate(julian);
+                return new HybridDate_forlxdb(julian);
             }
-            return new HybridDate(iso);
+            return new HybridDate_forlxdb(iso);
         }
     }
 
@@ -235,7 +235,7 @@ public final class HybridDate
      *
      * @param isoDate  the standard local date, not null
      */
-    HybridDate(LocalDate isoDate) {
+    HybridDate_forlxdb(LocalDate isoDate) {
         Objects.requireNonNull(isoDate, "isoDate");
         this.isoDate = isoDate;
         this.julianDate = (isoDate.isBefore(CUTOVER) ? JulianDate.from(isoDate) : null);
@@ -246,7 +246,7 @@ public final class HybridDate
      *
      * @param julianDate  the Julian date before the cutover, not null
      */
-    HybridDate(JulianDate julianDate) {
+    HybridDate_forlxdb(JulianDate julianDate) {
         Objects.requireNonNull(julianDate, "julianDate");
         this.isoDate = LocalDate.from(julianDate);
         this.julianDate = (isoDate.isBefore(CUTOVER) ? julianDate : null);
@@ -258,7 +258,7 @@ public final class HybridDate
      * @return the resolved date, not null
      */
     private Object readResolve() {
-        return new HybridDate(isoDate);
+        return new HybridDate_forlxdb(isoDate);
     }
 
     //-----------------------------------------------------------------------
@@ -348,7 +348,7 @@ public final class HybridDate
     }
 
     @Override
-    HybridDate resolvePrevious(int year, int month, int dayOfMonth) {
+    HybridDate_forlxdb resolvePrevious(int year, int month, int dayOfMonth) {
         switch (month) {
             case 2:
                 dayOfMonth = Math.min(dayOfMonth, getChronology().isLeapYear(year) ? 29 : 28);
@@ -375,8 +375,8 @@ public final class HybridDate
      * @return the British Cutover chronology, not null
      */
     @Override
-    public HybridChronology getChronology() {
-        return HybridChronology.INSTANCE;
+    public HybridChronology_forlxdb getChronology() {
+        return HybridChronology_forlxdb.INSTANCE;
     }
 
     /**
@@ -426,51 +426,51 @@ public final class HybridDate
 
     //-------------------------------------------------------------------------
     @Override
-    public HybridDate with(TemporalAdjuster adjuster) {
-        return (HybridDate) adjuster.adjustInto(this);
+    public HybridDate_forlxdb with(TemporalAdjuster adjuster) {
+        return (HybridDate_forlxdb) adjuster.adjustInto(this);
     }
 
     @Override
-    public HybridDate with(TemporalField field, long newValue) {
-        return (HybridDate) super.with(field, newValue);
+    public HybridDate_forlxdb with(TemporalField field, long newValue) {
+        return (HybridDate_forlxdb) super.with(field, newValue);
     }
 
     //-----------------------------------------------------------------------
     @Override
-    public HybridDate plus(TemporalAmount amount) {
-        return (HybridDate) amount.addTo(this);
+    public HybridDate_forlxdb plus(TemporalAmount amount) {
+        return (HybridDate_forlxdb) amount.addTo(this);
     }
 
     @Override
-    public HybridDate plus(long amountToAdd, TemporalUnit unit) {
-        return (HybridDate) super.plus(amountToAdd, unit);
+    public HybridDate_forlxdb plus(long amountToAdd, TemporalUnit unit) {
+        return (HybridDate_forlxdb) super.plus(amountToAdd, unit);
     }
 
     @Override
-    public HybridDate minus(TemporalAmount amount) {
-        return (HybridDate) amount.subtractFrom(this);
+    public HybridDate_forlxdb minus(TemporalAmount amount) {
+        return (HybridDate_forlxdb) amount.subtractFrom(this);
     }
 
     @Override
-    public HybridDate minus(long amountToSubtract, TemporalUnit unit) {
+    public HybridDate_forlxdb minus(long amountToSubtract, TemporalUnit unit) {
         return (amountToSubtract == Long.MIN_VALUE ? plus(Long.MAX_VALUE, unit).plus(1, unit) : plus(-amountToSubtract, unit));
     }
 
     //-------------------------------------------------------------------------
     @Override  // for covariant return type
     @SuppressWarnings("unchecked")
-    public ChronoLocalDateTime<HybridDate> atTime(LocalTime localTime) {
-        return (ChronoLocalDateTime<HybridDate>) super.atTime(localTime);
+    public ChronoLocalDateTime<HybridDate_forlxdb> atTime(LocalTime localTime) {
+        return (ChronoLocalDateTime<HybridDate_forlxdb>) super.atTime(localTime);
     }
 
     @Override
     public long until(Temporal endExclusive, TemporalUnit unit) {
-        return super.until(HybridDate.from(endExclusive), unit);
+        return super.until(HybridDate_forlxdb.from(endExclusive), unit);
     }
 
     @Override
     public ChronoPeriod until(ChronoLocalDate endDateExclusive) {
-        HybridDate end = HybridDate.from(endDateExclusive);
+        HybridDate_forlxdb end = HybridDate_forlxdb.from(endDateExclusive);
         long totalMonths = end.getProlepticMonth() - this.getProlepticMonth();  // safe
         int days = end.getDayOfMonth() - this.getDayOfMonth();
         if (totalMonths == 0 && isCutoverMonth()) {
@@ -520,8 +520,8 @@ public final class HybridDate
         if (this == obj) {
             return true;
         }
-        if (obj instanceof HybridDate) {
-            HybridDate otherDate = (HybridDate) obj;
+        if (obj instanceof HybridDate_forlxdb) {
+            HybridDate_forlxdb otherDate = (HybridDate_forlxdb) obj;
             return this.isoDate.equals(otherDate.isoDate);
         }
         return false;
