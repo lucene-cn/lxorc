@@ -25,11 +25,11 @@ import org.apache.hadoop.util.VersionInfo;
  */
 public class HadoopShimsFactory {
   private static final String CURRENT_SHIM_NAME =
-      "org.apache.orc.impl.HadoopShimsCurrent";
+      "cn.lucene.lorc.impl.HadoopShimsCurrent";
   private static final String PRE_2_6_SHIM_NAME =
-      "org.apache.orc.impl.HadoopShimsPre2_6";
+      "cn.lucene.lorc.impl.HadoopShimsPre2_6";
   private static final String PRE_2_7_SHIM_NAME =
-      "org.apache.orc.impl.HadoopShimsPre2_7";
+      "cn.lucene.lorc.impl.HadoopShimsPre2_7";
 
   private static HadoopShims SHIMS = null;
 
