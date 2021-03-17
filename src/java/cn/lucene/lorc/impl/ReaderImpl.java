@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.Key;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -55,6 +56,7 @@ import cn.lucene.lorc.StripeInformation;
 import cn.lucene.lorc.StripeStatistics;
 import cn.lucene.lorc.TypeDescription;
 import cn.lucene.lorc.UnknownFormatException;
+import cn.lucene.lorc.impl.reader.IOrcSkip;
 import cn.lucene.lorc.impl.reader.ReaderEncryption;
 import cn.lucene.lorc.impl.reader.ReaderEncryptionVariant;
 import cn.lucene.orc.OrcProto;
@@ -831,14 +833,14 @@ public class ReaderImpl implements Reader {
   }
 
   @Override
-  public RecordReader rows() throws IOException {
-    return rows(options());
+  public RecordReader rows(IOrcSkip skip) throws IOException {
+    return rows(skip,options());
   }
 
   @Override
-  public RecordReader rows(Options options) throws IOException {
+  public RecordReader rows(IOrcSkip skip,Options options) throws IOException {
     LOG.info("Reading ORC rows from " + path + " with " + options);
-    return new RecordReaderImpl(this, options);
+    return new RecordReaderImpl(skip,this, options);
   }
 
   @Override

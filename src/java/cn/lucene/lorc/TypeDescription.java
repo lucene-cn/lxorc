@@ -558,6 +558,18 @@ public class TypeDescription
   public List<String> getFieldNames() {
     return Collections.unmodifiableList(fieldNames);
   }
+  
+  public int getFieldIndex(String fieldName) {
+	  for(int i=0;i<fieldNames.size();i++)
+	  {
+		 if(fieldNames.get(i).equals(fieldName))
+		 {
+			 return i+1;
+		 }
+	  }
+	  
+	  return -1;
+	  }
 
   /**
    * Get the list of attribute names defined on this type.

@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -62,6 +63,7 @@ import cn.lucene.lorc.StringColumnStatistics;
 import cn.lucene.lorc.StripeInformation;
 import cn.lucene.lorc.TimestampColumnStatistics;
 import cn.lucene.lorc.TypeDescription;
+import cn.lucene.lorc.impl.reader.IOrcSkip;
 import cn.lucene.lorc.impl.reader.ReaderEncryption;
 import cn.lucene.lorc.impl.reader.StripePlanner;
 import cn.lucene.lorc.util.BloomFilter;
@@ -134,8 +136,9 @@ public class RecordReaderImpl implements RecordReader {
     return result;
   }
 
-  protected RecordReaderImpl(ReaderImpl fileReader,
+  protected RecordReaderImpl(IOrcSkip skip,ReaderImpl fileReader,
                              Reader.Options options) throws IOException {
+	  this.skipStripe=skip;
     OrcFile.WriterVersion writerVersion = fileReader.getWriterVersion();
     SchemaEvolution evolution;
     if (options.getSchema() == null) {
@@ -167,7 +170,7 @@ public class RecordReaderImpl implements RecordReader {
     this.fileIncluded = evolution.getFileIncluded();
     SearchArgument sarg = options.getSearchArgument();
     if (sarg != null && rowIndexStride != 0) {
-      sargApp = new SargApplier(sarg,
+      sargApp = new SargApplier(skip,sarg,
           rowIndexStride,
           evolution,
           writerVersion,
@@ -175,7 +178,19 @@ public class RecordReaderImpl implements RecordReader {
           fileReader.writerUsedProlepticGregorian(),
           fileReader.options.getConvertToProlepticGregorian());
     } else {
-      sargApp = null;
+    	if(rowIndexStride != 0)
+    	{
+    		sargApp = new SargApplier(skip,null,
+    	          rowIndexStride,
+    	          evolution,
+    	          writerVersion,
+    	          fileReader.useUTCTimestamp,
+    	          fileReader.writerUsedProlepticGregorian(),
+    	          fileReader.options.getConvertToProlepticGregorian());
+    	    
+    	}else {
+    	      sargApp = null;
+    	}
     }
 
     long rows = 0;
@@ -925,24 +940,32 @@ public class RecordReaderImpl implements RecordReader {
     /**
      * @deprecated Use the constructor having full parameters. This exists for backward compatibility.
      */
-    public SargApplier(SearchArgument sarg,
+    public SargApplier(IOrcSkip check_skip,SearchArgument sarg,
                        long rowIndexStride,
                        SchemaEvolution evolution,
                        OrcFile.WriterVersion writerVersion,
                        boolean useUTCTimestamp) {
-      this(sarg, rowIndexStride, evolution, writerVersion, useUTCTimestamp, false, false);
+      this(check_skip,sarg, rowIndexStride, evolution, writerVersion, useUTCTimestamp, false, false);
     }
-
-    public SargApplier(SearchArgument sarg,
+    IOrcSkip check_skip;
+    public SargApplier(IOrcSkip check_skip,SearchArgument sarg,
                        long rowIndexStride,
                        SchemaEvolution evolution,
                        OrcFile.WriterVersion writerVersion,
                        boolean useUTCTimestamp,
                        boolean writerUsedProlepticGregorian,
                        boolean convertToProlepticGregorian) {
+      this.check_skip=check_skip;
       this.writerVersion = writerVersion;
       this.sarg = sarg;
-      sargLeaves = sarg.getLeaves();
+      if(sarg!=null)
+      {
+          sargLeaves = sarg.getLeaves();
+ 
+      }else
+      {
+    	  sargLeaves=new ArrayList<>();
+      }
       this.writerUsedProlepticGregorian = writerUsedProlepticGregorian;
       this.convertToProlepticGregorian = convertToProlepticGregorian;
       filterColumns = mapSargColumnsToOrcInternalColIdx(sargLeaves,
@@ -983,16 +1006,10 @@ public class RecordReaderImpl implements RecordReader {
       boolean hasSelected = false;
       boolean hasSkipped = false;
       TruthValue[] exceptionAnswer = new TruthValue[leafValues.length];
-      for (int rowGroup = 0; rowGroup < result.length; ++rowGroup) {
-        for (int pred = 0; pred < leafValues.length; ++pred) {
-          int columnIx = filterColumns[pred];
-          if (columnIx == -1) {
-            // the column is a virtual column
-            leafValues[pred] = TruthValue.YES_NO_NULL;
-          } else if (exceptionAnswer[pred] != null) {
-            leafValues[pred] = exceptionAnswer[pred];
-          } else {
-            if (indexes[columnIx] == null) {
+      for (int rowGroup = 0; rowGroup < result.length; ++rowGroup) 
+      {
+    	  int columnIx=this.check_skip.getIndex();
+          if (indexes[columnIx] == null) {
               throw new AssertionError("Index is not populated for " + columnIx);
             }
             OrcProto.RowIndexEntry entry = indexes[columnIx].getEntry(rowGroup);
@@ -1000,60 +1017,93 @@ public class RecordReaderImpl implements RecordReader {
               throw new AssertionError("RG is not populated for " + columnIx + " rg " + rowGroup);
             }
             OrcProto.ColumnStatistics stats = entry.getStatistics();
-            OrcProto.BloomFilter bf = null;
-            OrcProto.Stream.Kind bfk = null;
-            if (bloomFilterIndices != null && bloomFilterIndices[columnIx] != null) {
-              bfk = bloomFilterKinds[columnIx];
-              bf = bloomFilterIndices[columnIx].getBloomFilter(rowGroup);
-            }
-            if (evolution != null && evolution.isPPDSafeConversion(columnIx)) {
-              PredicateLeaf predicate = sargLeaves.get(pred);
-              try {
-                leafValues[pred] = evaluatePredicateProto(stats,
-                    predicate, bfk, encodings.get(columnIx), bf,
-                    writerVersion, evolution.getFileSchema().
-                    findSubtype(columnIx),
-                    writerUsedProlepticGregorian, useUTCTimestamp);
-              } catch (Exception e) {
-                exceptionCount[pred] += 1;
-                if (e instanceof SargCastException) {
-                  LOG.info("Skipping ORC PPD - " + e.getMessage() + " on "
-                      + predicate);
-                } else {
-                  if (LOG.isWarnEnabled()) {
-                    final String reason = e.getClass().getSimpleName() + " when evaluating predicate." +
-                        " Skipping ORC PPD." +
-                        " Stats: " + stats +
-                        " Predicate: " + predicate;
-                    LOG.warn(reason, e);
-                  }
-                }
-                boolean hasNoNull = stats.hasHasNull() && !stats.getHasNull();
-                if (predicate.getOperator().equals(PredicateLeaf.Operator.NULL_SAFE_EQUALS)
-                    || hasNoNull) {
-                  exceptionAnswer[pred] = TruthValue.YES_NO;
-                } else {
-                  exceptionAnswer[pred] = TruthValue.YES_NO_NULL;
-                }
-                leafValues[pred] = exceptionAnswer[pred];
-              }
-            } else {
-              leafValues[pred] = TruthValue.YES_NO_NULL;
-            }
-            if (LOG.isTraceEnabled()) {
-              LOG.trace("Stats = " + stats);
-              LOG.trace("Setting " + sargLeaves.get(pred) + " to " + leafValues[pred]);
-            }
-          }
-        }
-        result[rowGroup] = sarg.evaluate(leafValues).isNeeded();
-        hasSelected = hasSelected || result[rowGroup];
-        hasSkipped = hasSkipped || (!result[rowGroup]);
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("Row group " + (rowIndexStride * rowGroup) + " to " +
-              (rowIndexStride * (rowGroup + 1) - 1) + " is " +
-              (result[rowGroup] ? "" : "not ") + "included.");
-        }
+            result[rowGroup]=this.check_skip.isSkip(stats)?false:true;
+            
+//            System.out.println(result[rowGroup]+"="+stats.getIntStatistics().getMaximum());
+//			new Exception().printStackTrace();
+
+      }
+      
+      if(sarg!=null)
+      {
+	      for (int rowGroup = 0; rowGroup < result.length; ++rowGroup) {
+	    	  
+	    	  if(!result[rowGroup])
+	    	  {
+	    		  continue;
+	    	  }
+	        for (int pred = 0; pred < leafValues.length; ++pred) {
+	          int columnIx = filterColumns[pred];
+	          if (columnIx == -1) {
+	            // the column is a virtual column
+	            leafValues[pred] = TruthValue.YES_NO_NULL;
+	          } else if (exceptionAnswer[pred] != null) {
+	            leafValues[pred] = exceptionAnswer[pred];
+	          } else {
+	            if (indexes[columnIx] == null) {
+	              throw new AssertionError("Index is not populated for " + columnIx);
+	            }
+	            OrcProto.RowIndexEntry entry = indexes[columnIx].getEntry(rowGroup);
+	            if (entry == null) {
+	              throw new AssertionError("RG is not populated for " + columnIx + " rg " + rowGroup);
+	            }
+	            OrcProto.ColumnStatistics stats = entry.getStatistics();
+	            OrcProto.BloomFilter bf = null;
+	            OrcProto.Stream.Kind bfk = null;
+	            if (bloomFilterIndices != null && bloomFilterIndices[columnIx] != null) {
+	              bfk = bloomFilterKinds[columnIx];
+	              bf = bloomFilterIndices[columnIx].getBloomFilter(rowGroup);
+	            }
+	            if (evolution != null && evolution.isPPDSafeConversion(columnIx)) {
+	              PredicateLeaf predicate = sargLeaves.get(pred);
+	              try {
+	                leafValues[pred] = evaluatePredicateProto(stats,
+	                    predicate, bfk, encodings.get(columnIx), bf,
+	                    writerVersion, evolution.getFileSchema().
+	                    findSubtype(columnIx),
+	                    writerUsedProlepticGregorian, useUTCTimestamp);
+	              } catch (Exception e) {
+	                exceptionCount[pred] += 1;
+	                if (e instanceof SargCastException) {
+	                  LOG.info("Skipping ORC PPD - " + e.getMessage() + " on "
+	                      + predicate);
+	                } else {
+	                  if (LOG.isWarnEnabled()) {
+	                    final String reason = e.getClass().getSimpleName() + " when evaluating predicate." +
+	                        " Skipping ORC PPD." +
+	                        " Stats: " + stats +
+	                        " Predicate: " + predicate;
+	                    LOG.warn(reason, e);
+	                  }
+	                }
+	                boolean hasNoNull = stats.hasHasNull() && !stats.getHasNull();
+	                if (predicate.getOperator().equals(PredicateLeaf.Operator.NULL_SAFE_EQUALS)
+	                    || hasNoNull) {
+	                  exceptionAnswer[pred] = TruthValue.YES_NO;
+	                } else {
+	                  exceptionAnswer[pred] = TruthValue.YES_NO_NULL;
+	                }
+	                leafValues[pred] = exceptionAnswer[pred];
+	              }
+	            } else {
+	              leafValues[pred] = TruthValue.YES_NO_NULL;
+	            }
+	            if (LOG.isTraceEnabled()) {
+	              LOG.trace("Stats = " + stats);
+	              LOG.trace("Setting " + sargLeaves.get(pred) + " to " + leafValues[pred]);
+	            }
+	          }
+	        }
+	        
+	        result[rowGroup] = sarg.evaluate(leafValues).isNeeded();
+	        hasSelected = hasSelected || result[rowGroup];
+	        hasSkipped = hasSkipped || (!result[rowGroup]);
+	        if (LOG.isDebugEnabled()) {
+	          LOG.debug("Row group " + (rowIndexStride * rowGroup) + " to " +
+	              (rowIndexStride * (rowGroup + 1) - 1) + " is " +
+	              (result[rowGroup] ? "" : "not ") + "included.");
+	        }
+	      }
       }
 
       return hasSkipped ? ((hasSelected || !returnNone) ? result : READ_NO_RGS) : READ_ALL_RGS;
@@ -1090,13 +1140,37 @@ public class RecordReaderImpl implements RecordReader {
   private void clearStreams() {
     planner.clearStreams();
   }
+  
+  private boolean lxdb_skipStripe()
+  {
+	  int next_i=stripes.size();
+	  for(int i=currentStripe;i<stripes.size();i++)
+	  {
+		  if(!skipStripe.getSkipStripe().get(i))
+		  {
+			  next_i=i;
+
+			 break; 
+		  }
+
+	  }
+	  currentStripe=next_i;
+	 return currentStripe<stripes.size();
+  }
 
   /**
    * Read the current stripe into memory.
    *
    * @throws IOException
    */
-  private void readStripe() throws IOException {
+  private boolean readStripe() throws IOException {
+	  	  
+	boolean find=this.lxdb_skipStripe();
+	if(!find)
+	{
+		return false;
+	}
+	System.out.println("skip:"+find+"@"+currentStripe+"@"+stripes.size());
     StripeInformation stripe = beginReadStripe();
     planner.parseStripe(stripe, fileIncluded);
     includedRowGroups = pickRowGroups();
@@ -1118,6 +1192,8 @@ public class RecordReaderImpl implements RecordReader {
         seekToRowEntry(reader, (int) (rowInStripe / rowIndexStride));
       }
     }
+    
+    return true;
   }
 
   private StripeInformation beginReadStripe() throws IOException {
@@ -1200,6 +1276,9 @@ public class RecordReaderImpl implements RecordReader {
     }
     return true;
   }
+  
+  IOrcSkip skipStripe;
+  
 
   @Override
   public boolean nextBatch(VectorizedRowBatch batch) throws IOException {
@@ -1210,7 +1289,11 @@ public class RecordReaderImpl implements RecordReader {
           batch.size = 0;
           return false;
         }
-        readStripe();
+        boolean find=readStripe();
+        if(!find)
+        {
+        	return false;
+        }
       }
 
       int batchSize = computeBatchSize(batch.getMaxSize());
@@ -1228,7 +1311,9 @@ public class RecordReaderImpl implements RecordReader {
     }
   }
 
-  private int computeBatchSize(long targetBatchSize) {
+
+
+private int computeBatchSize(long targetBatchSize) {
     final int batchSize;
     // In case of PPD, batch size should be aware of row group boundaries. If only a subset of row
     // groups are selected then marker position is set to the end of range (subset of row groups
@@ -1347,7 +1432,11 @@ public class RecordReaderImpl implements RecordReader {
     int rightStripe = findStripe(rowNumber);
     if (rightStripe != currentStripe) {
       currentStripe = rightStripe;
-      readStripe();
+      boolean find=readStripe();
+      if(!find)
+      {
+    	  return ;
+      }
     }
     readRowIndex(currentStripe, fileIncluded, sargApp == null ? null : sargApp.sargColumns);
 
@@ -1397,4 +1486,5 @@ public class RecordReaderImpl implements RecordReader {
   public int getMaxDiskRangeChunkLimit() {
     return maxDiskRangeChunkLimit;
   }
+
 }

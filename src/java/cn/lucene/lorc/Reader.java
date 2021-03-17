@@ -21,11 +21,13 @@ package cn.lucene.lorc;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.io.sarg.SearchArgument;
 
+import cn.lucene.lorc.impl.reader.IOrcSkip;
 import cn.lucene.orc.OrcProto;
 
 /**
@@ -454,7 +456,7 @@ public interface Reader extends Closeable {
    * Create a RecordReader that reads everything with the default options.
    * @return a new RecordReader
    */
-  RecordReader rows() throws IOException;
+  RecordReader rows(IOrcSkip skip) throws IOException;
 
   /**
    * Create a RecordReader that uses the options given.
@@ -463,7 +465,7 @@ public interface Reader extends Closeable {
    * @param options the options to read with
    * @return a new RecordReader
    */
-  RecordReader rows(Options options) throws IOException;
+  RecordReader rows(IOrcSkip skip,Options options) throws IOException;
 
   /**
    * @return List of integers representing version of the file, in order from major to minor.
