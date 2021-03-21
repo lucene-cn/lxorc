@@ -221,7 +221,6 @@ public class RecordReaderImpl implements RecordReader {
       DataReaderProperties.Builder builder =
           DataReaderProperties.builder()
               .withCompression(unencryptedOptions)
-              .withFileSystemSupplier(fileReader.getFileSystemSupplier())
               .withPath(fileReader.path)
               .withMaxDiskRangeChunkLimit(maxDiskRangeChunkLimit)
               .withZeroCopy(zeroCopy);
@@ -1128,9 +1127,7 @@ public class RecordReaderImpl implements RecordReader {
    */
   protected boolean[] pickRowGroups() throws IOException {
     // if we don't have a sarg or indexes, we read everything
-    if (sargApp == null) {
-      return null;
-    }
+  
     readRowIndex(currentStripe, fileIncluded, sargApp.sargColumns);
     return sargApp.pickRowGroups(stripes.get(currentStripe),
         indexes.getRowGroupIndex(),
@@ -1171,7 +1168,7 @@ public class RecordReaderImpl implements RecordReader {
 	{
 		return false;
 	}
-	System.out.println("skip:"+find+"@"+currentStripe+"@"+stripes.size());
+	System.out.println("skipreadStripe:"+find+"@"+currentStripe+"@"+stripes.size() );
     StripeInformation stripe = beginReadStripe();
     planner.parseStripe(stripe, fileIncluded);
     includedRowGroups = pickRowGroups();
@@ -1296,6 +1293,7 @@ public class RecordReaderImpl implements RecordReader {
         	return false;
         }
       }
+      
 
       int batchSize = computeBatchSize(batch.getMaxSize());
 

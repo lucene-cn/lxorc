@@ -501,7 +501,7 @@ public class ReaderImpl implements Reader {
    * @param path pathname for file
    * @param options options for reading
    */
-  public ReaderImpl(Path path, OrcFile.ReaderOptions options) throws IOException {
+  public ReaderImpl(Path path,FSDataInputStream input,long len, OrcFile.ReaderOptions options) throws IOException {
     this.path = path;
     this.options = options;
     this.conf = options.getConfiguration();
@@ -533,7 +533,7 @@ public class ReaderImpl implements Reader {
     } else {
       OrcTail orcTail = options.getOrcTail();
       if (orcTail == null) {
-        tail = extractFileTail(getFileSystem(), path, options.getMaxLength());
+        tail = extractFileTail( input,len,path, options.getMaxLength());
         options.orcTail(tail);
       } else {
         checkOrcVersion(path, orcTail.getPostScript());
@@ -558,24 +558,24 @@ public class ReaderImpl implements Reader {
     this.types = OrcUtils.getOrcTypes(schema);
   }
 
-  protected FileSystem getFileSystem() throws IOException {
-    FileSystem fileSystem = options.getFilesystem();
-    if (fileSystem == null) {
-      fileSystem = path.getFileSystem(options.getConfiguration());
-      options.filesystem(fileSystem);
-    }
-    return fileSystem;
-  }
+//  protected FileSystem getFileSystem() throws IOException {
+//    FileSystem fileSystem = options.getFilesystem();
+//    if (fileSystem == null) {
+//      fileSystem = path.getFileSystem(options.getConfiguration());
+//      options.filesystem(fileSystem);
+//    }
+//    return fileSystem;
+//  }
 
-  protected Supplier<FileSystem> getFileSystemSupplier() {
-    return () -> {
-      try {
-        return getFileSystem();
-      } catch (IOException e) {
-        throw new RuntimeException("Can't create filesystem", e);
-      }
-    };
-  }
+//  protected Supplier<FileSystem> getFileSystemSupplier() {
+//    return () -> {
+//      try {
+//        return getFileSystem();
+//      } catch (IOException e) {
+//        throw new RuntimeException("Can't create filesystem", e);
+//      }
+//    };
+//  }
 
   /**
    * Get the WriterVersion based on the ORC file postscript.
@@ -721,20 +721,19 @@ public class ReaderImpl implements Reader {
     return new OrcTail(fileTailBuilder.build(), new BufferChunk(buffer.slice(), 0), modificationTime);
   }
 
-  protected OrcTail extractFileTail(FileSystem fs, Path path,
+  protected OrcTail extractFileTail(FSDataInputStream input,long len, Path path,
       long maxFileLength) throws IOException {
     BufferChunk buffer;
     OrcProto.PostScript ps;
     OrcProto.FileTail.Builder fileTailBuilder = OrcProto.FileTail.newBuilder();
     long modificationTime;
-    file = fs.open(path);
+    file =input;// fs.open(path);
     try {
       // figure out the size of the file using the option or filesystem
       long size;
       if (maxFileLength == Long.MAX_VALUE) {
-        FileStatus fileStatus = fs.getFileStatus(path);
-        size = fileStatus.getLen();
-        modificationTime = fileStatus.getModificationTime();
+        size = len;
+        modificationTime = -1;
       } else {
         size = maxFileLength;
         modificationTime = -1;

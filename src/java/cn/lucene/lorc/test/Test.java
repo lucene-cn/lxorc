@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
@@ -17,6 +18,7 @@ import org.apache.hadoop.hive.ql.io.sarg.SearchArgument;
 import org.apache.hadoop.hive.ql.io.sarg.SearchArgumentFactory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IOContext;
+import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.util.FixedBitSet;
 import org.apache.hadoop.hive.ql.io.sarg.PredicateLeaf;
@@ -31,18 +33,23 @@ import cn.lucene.lorc.StripeStatistics;
 import cn.lucene.lorc.TypeDescription;
 import cn.lucene.lorc.Writer;
 import cn.lucene.lorc.impl.reader.IOrcSkip;
+import cn.lucene.lorc.lucene.LXLuceneInputStream;
 import cn.lucene.lorc.lucene.LXLuceneOutputStream;
 import cn.lucene.orc.OrcProto;
 
 public class Test {
 	public static void main(String[] args) throws IOException {
 	
-		testWrite();
+		testRead();
 	}
 	
 	
 	public static void testRead() throws IOException {
-		File file = new File("E:\\tmp\\orc.test");
+		
+		File file = new File("E:\\tmp\\orc_lucene.test");
+		FSDirectory dir=FSDirectory.open(file.toPath());
+		IndexInput input=dir.openInput("tim.orc", IOContext.DEFAULT);
+	
 		Path path = new Path(file.toURI().toString());
 		System.out.println(file.toURI().toString());
 		
@@ -54,7 +61,7 @@ public class Test {
 
 		ReaderOptions opt=OrcFile.readerOptions(new Configuration());
 	
-		Reader reader = OrcFile.createReader(path, opt);
+		Reader reader = OrcFile.createReader(path,new FSDataInputStream(new LXLuceneInputStream(input)),input.length(), opt);
 		
 		  int xindex=reader.getSchema().findSubtype("x").getId();
 		  HashMap<Integer, Boolean> skip=new HashMap<>();
@@ -65,10 +72,13 @@ public class Test {
 				public boolean isSkip( OrcProto.ColumnStatistics stat,String from) {
 				
 					int index=(int) (stat.getIntStatistics().getMinimum());
-					if(bitset.length()<=index)
+					if(index>bitset.length())
 					{
-						return false;
+						return true;
 					}
+					
+				
+
 					int val=bitset.nextSetBit(index);
 					if(stat.getIntStatistics().getMinimum()<=val&&val<=stat.getIntStatistics().getMaximum())
 					{
@@ -119,6 +129,11 @@ public class Test {
 		while (rowIterator.nextBatch(batch)) {
 			for (int row = 0; row < batch.size; ++row) {
 				int xRow = x.isRepeating ? 0 : row;
+				
+				if(x.vector[xRow]<0||x.vector[xRow]>bitset.length())
+				{
+					continue; 
+				}
 
 				if(bitset.get((int) x.vector[xRow]))
 				{
@@ -133,6 +148,8 @@ public class Test {
 //		
 		}
 		rowIterator.close();
+		
+		System.out.println("finish");
 	}
 	public static void testWrite() throws IOException {
 		File file = new File("E:\\tmp\\orc_lucene.test");

@@ -27,7 +27,6 @@ import cn.lucene.lorc.OrcConf;
 
 public final class DataReaderProperties {
 
-  private final Supplier<FileSystem> fileSystemSupplier;
   private final Path path;
   private final FSDataInputStream file;
   private final InStream.StreamOptions compression;
@@ -35,7 +34,6 @@ public final class DataReaderProperties {
   private final int maxDiskRangeChunkLimit;
 
   private DataReaderProperties(Builder builder) {
-    this.fileSystemSupplier = builder.fileSystemSupplier;
     this.path = builder.path;
     this.file = builder.file;
     this.compression = builder.compression;
@@ -43,9 +41,7 @@ public final class DataReaderProperties {
     this.maxDiskRangeChunkLimit = builder.maxDiskRangeChunkLimit;
   }
 
-  public Supplier<FileSystem> getFileSystemSupplier() {
-    return fileSystemSupplier;
-  }
+ 
 
   public Path getPath() {
     return path;
@@ -120,9 +116,8 @@ public final class DataReaderProperties {
     }
 
     public DataReaderProperties build() {
-      if (fileSystemSupplier == null || path == null) {
-        throw new NullPointerException("Filesystem = " + fileSystemSupplier +
-                                           ", path = " + path);
+      if ( path == null) {
+        throw new NullPointerException("path = " + path);
       }
 
       return new DataReaderProperties(this);

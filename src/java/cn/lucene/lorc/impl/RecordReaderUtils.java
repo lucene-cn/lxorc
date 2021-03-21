@@ -51,14 +51,12 @@ public class RecordReaderUtils {
     private FSDataInputStream file;
     private ByteBufferAllocatorPool pool;
     private HadoopShims.ZeroCopyReaderShim zcr = null;
-    private final Supplier<FileSystem> fileSystemSupplier;
     private final Path path;
     private final boolean useZeroCopy;
     private InStream.StreamOptions options;
     private boolean isOpen = false;
 
     private DefaultDataReader(DataReaderProperties properties) {
-      this.fileSystemSupplier = properties.getFileSystemSupplier();
       this.path = properties.getPath();
       this.file = properties.getFile();
       this.useZeroCopy = properties.getZeroCopy();
@@ -67,9 +65,7 @@ public class RecordReaderUtils {
 
     @Override
     public void open() throws IOException {
-      if (file == null) {
-        this.file = fileSystemSupplier.get().open(path);
-      }
+     
       if (useZeroCopy) {
         // ZCR only uses codec for boolean checks.
         pool = new ByteBufferAllocatorPool();

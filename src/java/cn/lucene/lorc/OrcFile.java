@@ -379,9 +379,9 @@ public class OrcFile {
     return new ReaderOptions(conf);
   }
 
-  public static Reader createReader(Path path,
+  public static Reader createReader(Path path,FSDataInputStream input,long len,
                                     ReaderOptions options) throws IOException {
-    return new ReaderImpl(path, options);
+    return new ReaderImpl(path,input,len, options);
   }
 
   public interface WriterContext {
