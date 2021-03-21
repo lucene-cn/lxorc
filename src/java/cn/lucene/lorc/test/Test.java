@@ -3,16 +3,22 @@ package cn.lucene.lorc.test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 import org.apache.hadoop.hive.ql.io.sarg.SearchArgument;
 import org.apache.hadoop.hive.ql.io.sarg.SearchArgumentFactory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.IOContext;
+import org.apache.lucene.store.IndexOutput;
+import org.apache.lucene.util.FixedBitSet;
 import org.apache.hadoop.hive.ql.io.sarg.PredicateLeaf;
 
 import cn.lucene.lorc.ColumnStatistics;
@@ -25,12 +31,13 @@ import cn.lucene.lorc.StripeStatistics;
 import cn.lucene.lorc.TypeDescription;
 import cn.lucene.lorc.Writer;
 import cn.lucene.lorc.impl.reader.IOrcSkip;
+import cn.lucene.lorc.lucene.LXLuceneOutputStream;
 import cn.lucene.orc.OrcProto;
 
 public class Test {
 	public static void main(String[] args) throws IOException {
 	
-		testRead();
+		testWrite();
 	}
 	
 	
@@ -38,10 +45,16 @@ public class Test {
 		File file = new File("E:\\tmp\\orc.test");
 		Path path = new Path(file.toURI().toString());
 		System.out.println(file.toURI().toString());
+		
+		FixedBitSet bitset=new FixedBitSet(1000000000);
+		bitset.set(100000500);
+		bitset.set(300000500);
+		bitset.set(500000500);
+		bitset.set(600000500, 600000600);
+
 		ReaderOptions opt=OrcFile.readerOptions(new Configuration());
 	
 		Reader reader = OrcFile.createReader(path, opt);
-		
 		
 		  int xindex=reader.getSchema().findSubtype("x").getId();
 		  HashMap<Integer, Boolean> skip=new HashMap<>();
@@ -51,13 +64,17 @@ public class Test {
 				@Override
 				public boolean isSkip( OrcProto.ColumnStatistics stat,String from) {
 				
-					if(stat.getIntStatistics().getMinimum()<=50005000&&50005000<=stat.getIntStatistics().getMaximum())
+					int index=(int) (stat.getIntStatistics().getMinimum());
+					if(bitset.length()<=index)
 					{
-						System.out.println(from+"@"+"pass:"+stat.getIntStatistics());
+						return false;
+					}
+					int val=bitset.nextSetBit(index);
+					if(stat.getIntStatistics().getMinimum()<=val&&val<=stat.getIntStatistics().getMaximum())
+					{
 
 						return false;
 					}
-					System.out.println(from+"@"+"skip:"+stat.getIntStatistics());
 
 					return true;
 				
@@ -102,8 +119,13 @@ public class Test {
 		while (rowIterator.nextBatch(batch)) {
 			for (int row = 0; row < batch.size; ++row) {
 				int xRow = x.isRepeating ? 0 : row;
-				System.out.print((cnt++) +" y: " + y.toString(row));
-				System.out.println(",x: "  + x.vector[xRow] );
+
+				if(bitset.get((int) x.vector[xRow]))
+				{
+					System.out.print((cnt++) +" y: " + y.toString(row));
+					System.out.println(",x: "  + x.vector[xRow] );
+				}
+				
 		
 			}
 			
@@ -113,28 +135,44 @@ public class Test {
 		rowIterator.close();
 	}
 	public static void testWrite() throws IOException {
-		File file = new File("E:\\tmp\\orc.test");
-		Path path = new Path(file.toURI().toString());
-		System.out.println(file.toURI().toString());
-		String optStr = "struct<x:int,y:string>";
+		File file = new File("E:\\tmp\\orc_lucene.test");
+		FSDirectory dir=FSDirectory.open(file.toPath());
+		IndexOutput output=dir.createOutput("tim.orc", IOContext.DEFAULT);
+	
+		String optStr = "struct<x:int,y:string,z:string>";
 		TypeDescription schema = TypeDescription.fromString(optStr);
 		WriterOptions opts = OrcFile.writerOptions(new Configuration()).setSchema(schema);
-		Writer writer = OrcFile.createWriter(path, opts);
+		Writer writer = OrcFile.createWriter(new Path(file.getPath()),new FSDataOutputStream(new LXLuceneOutputStream(output),null), opts);
 		VectorizedRowBatch batch = schema.createRowBatch();
 
 		System.out.println(batch.getMaxSize());
 
 		LongColumnVector x = (LongColumnVector) batch.cols[0];
 		BytesColumnVector y = (BytesColumnVector) batch.cols[1];
-		for (int r = 0; r < 1000000000; ++r) {
+		BytesColumnVector z = (BytesColumnVector) batch.cols[2];
+
+		for (int r = 0; r < 2000000000; ++r) {
 			int row = batch.size++;
 			x.vector[row] = r;
-			byte[] buffer = ("last_"+r+"_"+ (r * 3)).getBytes(StandardCharsets.UTF_8);
-			y.setRef(row, buffer, 0, buffer.length);
-			// If the batch is full, write it out and start over.
+		
+			{
+				byte[] buffer = (String.valueOf(r%10000)).getBytes(StandardCharsets.UTF_8);
+				y.setRef(row, buffer, 0, buffer.length);
+
+			}
+			{
+				byte[] buffer = (String.valueOf((long)(r/10000))).getBytes(StandardCharsets.UTF_8);
+				z.setRef(row, buffer, 0, buffer.length);
+			}
+		
 			if (batch.size == batch.getMaxSize()) {
 				writer.addRowBatch(batch);
 				batch.reset();
+			}
+			
+			if(r%100000==0)
+			{
+				System.out.println(r);
 			}
 		}
 		if (batch.size != 0) {

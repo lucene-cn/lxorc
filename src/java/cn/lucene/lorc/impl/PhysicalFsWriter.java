@@ -59,7 +59,6 @@ public class PhysicalFsWriter implements PhysicalWriter {
   // a protobuf outStream around streamFactory
   private CodedOutputStream codedCompressStream;
 
-  private final Path path;
   private final HadoopShims shims;
   private final long blockSize;
   private final int maxPadding;
@@ -81,19 +80,18 @@ public class PhysicalFsWriter implements PhysicalWriter {
 
   private final Map<WriterEncryptionVariant, VariantTracker> variants = new TreeMap<>();
 
-  public PhysicalFsWriter(FileSystem fs,
-                          Path path,
+  public PhysicalFsWriter(
+		  FSDataOutputStream path,
                           OrcFile.WriterOptions opts
                           ) throws IOException {
-    this(fs, path, opts, new WriterEncryptionVariant[0]);
+    this( path, opts, new WriterEncryptionVariant[0]);
   }
 
-  public PhysicalFsWriter(FileSystem fs,
-                          Path path,
+  public PhysicalFsWriter(
+		  FSDataOutputStream path,
                           OrcFile.WriterOptions opts,
                           WriterEncryptionVariant[] encryption
                           ) throws IOException {
-    this.path = path;
     long defaultStripeSize = opts.getStripeSize();
     this.addBlockPadding = opts.getBlockPadding();
     if (opts.isEnforceBufferSize()) {
@@ -113,8 +111,7 @@ public class PhysicalFsWriter implements PhysicalWriter {
     this.blockSize = opts.getBlockSize();
     LOG.info("ORC writer created for path: {} with stripeSize: {} blockSize: {}" +
         " compression: {}", path, defaultStripeSize, blockSize, compress);
-    rawWriter = fs.create(path, opts.getOverwrite(), HDFS_BUFFER_SIZE,
-        fs.getDefaultReplication(path), blockSize);
+    rawWriter = path;
     blockOffset = 0;
     unencrypted = new VariantTracker(opts.getSchema(), compress);
     writeVariableLengthBlocks = opts.getWriteVariableLengthBlocks();
@@ -765,6 +762,6 @@ public class PhysicalFsWriter implements PhysicalWriter {
 
   @Override
   public String toString() {
-    return path.toString();
+    return String.valueOf(this.rawWriter);
   }
 }

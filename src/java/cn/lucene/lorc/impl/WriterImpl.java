@@ -29,6 +29,7 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
@@ -142,8 +143,9 @@ public class WriterImpl implements WriterInternal, MemoryManager.Callback {
   private boolean needKeyFlush;
   private final boolean useProlepticGregorian;
 
-  public WriterImpl(FileSystem fs,
-                    Path path,
+  public WriterImpl(
+          Path path,
+		  FSDataOutputStream output,
                     OrcFile.WriterOptions opts) throws IOException {
     this.path = path;
     this.conf = opts.getConfiguration();
@@ -166,7 +168,7 @@ public class WriterImpl implements WriterInternal, MemoryManager.Callback {
 
     // Set up the physical writer
     this.physicalWriter = opts.getPhysicalWriter() == null ?
-                              new PhysicalFsWriter(fs, path, opts, encryption) :
+                              new PhysicalFsWriter(output, opts, encryption) :
                               opts.getPhysicalWriter();
     unencryptedOptions = physicalWriter.getStreamOptions();
     OutStream.assertBufferSizeValid(unencryptedOptions.getBufferSize());
