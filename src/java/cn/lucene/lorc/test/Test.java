@@ -43,20 +43,22 @@ public class Test {
 		Reader reader = OrcFile.createReader(path, opt);
 		
 		
-		  int xindex=reader.getSchema().getFieldIndex("x");
+		  int xindex=reader.getSchema().findSubtype("x").getId();
 		  HashMap<Integer, Boolean> skip=new HashMap<>();
 
 			IOrcSkip check_skip=new IOrcSkip() {
 				
 				@Override
-				public boolean isSkip( OrcProto.ColumnStatistics stat) {
+				public boolean isSkip( OrcProto.ColumnStatistics stat,String from) {
 				
-
 					if(stat.getIntStatistics().getMinimum()<=50005000&&50005000<=stat.getIntStatistics().getMaximum())
 					{
+						System.out.println(from+"@"+"pass:"+stat.getIntStatistics());
+
 						return false;
 					}
-					
+					System.out.println(from+"@"+"skip:"+stat.getIntStatistics());
+
 					return true;
 				
 				}
@@ -76,7 +78,7 @@ public class Test {
 		  List<StripeStatistics> strip=reader.getStripeStatistics();
 		  for(int i=0;i<strip.size();i++)
 		  {
-			  skip.put(i, check_skip.isSkip(strip.get(i).getColumn(xindex)));
+			  skip.put(i, check_skip.isSkip(strip.get(i).getColumn(xindex),"stripe"));
 		  }
 		  
 		  System.out.println(skip);
@@ -96,16 +98,17 @@ public class Test {
 		LongColumnVector x = (LongColumnVector) batch.cols[0];
 		BytesColumnVector y = (BytesColumnVector) batch.cols[1];
 
+		int cnt=0;
 		while (rowIterator.nextBatch(batch)) {
 			for (int row = 0; row < batch.size; ++row) {
 				int xRow = x.isRepeating ? 0 : row;
-				System.out.print("y: " + y.toString(row));
+				System.out.print((cnt++) +" y: " + y.toString(row));
 				System.out.println(",x: "  + x.vector[xRow] );
-//			
-//			
+		
 			}
 			
-		
+			
+//		
 		}
 		rowIterator.close();
 	}

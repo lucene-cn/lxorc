@@ -1017,8 +1017,9 @@ public class RecordReaderImpl implements RecordReader {
               throw new AssertionError("RG is not populated for " + columnIx + " rg " + rowGroup);
             }
             OrcProto.ColumnStatistics stats = entry.getStatistics();
-            result[rowGroup]=this.check_skip.isSkip(stats)?false:true;
-            
+            result[rowGroup]=this.check_skip.isSkip(stats,"group")?false:true;
+            hasSelected = hasSelected || result[rowGroup];
+	        hasSkipped = hasSkipped || (!result[rowGroup]);
 //            System.out.println(result[rowGroup]+"="+stats.getIntStatistics().getMaximum());
 //			new Exception().printStackTrace();
 
